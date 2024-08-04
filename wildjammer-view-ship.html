@@ -125,15 +125,21 @@
                     <table class="w-full">
                         <thead>
                             <tr>
-                                <th>Type of Crew</th>
-                                <th>#</th>
-                                <th>Rate</th>
-                                <th>Per Month</th>
+                                <th class="text-left">Type</th>
+                                <th class="text-right">Count</th>
+                                <th class="text-right">Monthly Cost</th>
                             </tr>
                         </thead>
-                        <tbody id="crewComplementTable">
-                            <!-- Crew complement rows will be added here dynamically -->
+                        <tbody id="crewTable">
+                            <!-- Crew rows will be added here dynamically -->
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <th class="text-left">Total</th>
+                                <th id="totalCrewCount" class="text-right"></th>
+                                <th id="totalCrewCost" class="text-right"></th>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
                 <div>
@@ -306,7 +312,29 @@
                 document.getElementById('goldInput').value = currentShip.cargo.gold;
                 document.getElementById('platinumInput').value = currentShip.cargo.platinum;
                 document.getElementById('cargoItems').value = currentShip.cargo.items;
+                // Update crew information
+                const crewTable = document.getElementById('crewTable');
+                crewTable.innerHTML = '';
+                let totalCrew = 0;
+                let totalCost = 0;
+            
+                for (const [type, count] of Object.entries(currentShip.crew)) {
+                    if (count > 0) {
+                        const crewType = wildjammerData.crewTypes[type];
+                        const monthlyCost = crewType.cost.month * count;
+                        totalCrew += count;
+                        totalCost += monthlyCost;
+            
+                        const row = crewTable.insertRow();
+                        row.innerHTML = `
+                            <td>${crewType.name}</td>
+                            <td class="text-right">${count}</td>
+                            <td class="text-right">${monthlyCost} gp</td>
+                        `;
+                    }
             }
+            document.getElementById('totalCrewCount').textContent = totalCrew;
+            document.getElementById('totalCrewCost').textContent = `${totalCost} gp`;
             function updateWeaponsList() {
                 console.log('Updating weapons list:', currentShip.weapons);
                 const weaponsList = document.getElementById('weaponsList');
