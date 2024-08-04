@@ -279,7 +279,8 @@
                 document.getElementById('fighterHelmsman2').textContent = currentShip.fighterHelmsman2;
                 document.getElementById('fighterHelmsman3').textContent = currentShip.fighterHelmsman3;
                 document.getElementById('maneuverability').textContent = currentShip.maneuverability;
-                document.getElementById('tacticalSpeed').textContent = currentShip.speed;
+                const gridMovement = Math.floor(currentShip.speed / 500);
+                document.getElementById('tacticalSpeed').textContent = `${currentShip.speed} (${gridMovement} grids)`;
                 document.getElementById('hoverSpeed').textContent = "20 mph";
                 document.getElementById('bulwarkPoints').textContent = currentShip.bp;
                 document.getElementById('hullPoints').value = currentShip.hp;
@@ -322,9 +323,10 @@
                             <td class="text-center py-2">${weapon.damage} + <input type="number" class="bg-gray-800 rounded p-1 w-16 text-center weapon-damage-modifier" value="${currentShip.weaponModifiers?.[weaponKey]?.damage || 0}" data-index="${index}"></td>
                             <td class="text-center py-2">${weapon.range.normal}/${weapon.range.long}</td>
                             <td class="text-center py-2">
+                            <td class="text-center py-2">
                                 <div class="flex items-center justify-center">
                                     <button class="px-2 py-1 bg-red-600 text-white rounded mr-2" onclick="adjustWeaponHP(${index}, -1)">-</button>
-                                    <input type="number" class="bg-gray-800 rounded p-1 w-16 text-center weapon-hp" value="${currentShip.weaponModifiers?.[weaponKey]?.hp || 10}" data-index="${index}" readonly>
+                                    <input type="number" class="bg-gray-800 rounded p-1 w-16 text-center weapon-hp" value="${currentShip.weaponModifiers?.[weaponKey]?.hp || 10}" data-index="${index}">
                                     <button class="px-2 py-1 bg-green-600 text-white rounded ml-2" onclick="adjustWeaponHP(${index}, 1)">+</button>
                                 </div>
                             </td>
@@ -339,7 +341,14 @@
                     }
                 });
             }
-            
+            function adjustWeaponHP(index, amount) {
+                const weaponKey = currentShip.weapons[index];
+                if (!currentShip.weaponModifiers) currentShip.weaponModifiers = {};
+                if (!currentShip.weaponModifiers[weaponKey]) currentShip.weaponModifiers[weaponKey] = {};
+                currentShip.weaponModifiers[weaponKey].hp = (currentShip.weaponModifiers[weaponKey].hp || 10) + amount;
+                updateWeaponsList();
+                saveShipChanges();
+            }
             function updateModulesList() {
                 console.log('Updating modules list:', currentShip.modules);
                 const modulesList = document.getElementById('modulesList');
@@ -352,10 +361,13 @@
                             <strong>${module.name}</strong>
                             <p>${module.description}</p>
                             ${module.uses ? `
-                                <label>
-                                    <input type="checkbox" class="module-use" data-index="${index}">
-                                    Use (${module.uses.max} per ${module.uses.per})
-                                </label>
+                                <div class="module-uses" data-index="${index}">
+                                    ${Array(module.uses.max).fill().map((_, i) => `
+                                        <input type="checkbox" id="module-use-${index}-${i}" class="module-use" data-index="${index}" data-use="${i}">
+                                        <label for="module-use-${index}-${i}">Use ${i + 1}</label>
+                                    `).join('')}
+                                </div>
+                                <p>Uses: ${module.uses.max} per ${module.uses.per}</p>
                             ` : ''}
                             <button class="px-2 py-1 bg-red-600 text-white rounded" onclick="removeModule(${index})">Remove</button>
                         `;
@@ -364,8 +376,7 @@
                         console.error(`Module not found: ${moduleKey}`);
                     }
                 });
-            }
-            
+            }            
             function updateUpgradesList() {
                 console.log('Updating upgrades list:', currentShip.upgrades);
                 const upgradesList = document.getElementById('upgradesList');
@@ -552,11 +563,11 @@
                 currentShip.fighterHelmsman2 = document.getElementById('fighterHelmsman2').textContent;
                 currentShip.fighterHelmsman3 = document.getElementById('fighterHelmsman3').textContent;
                 currentShip.maneuverability = parseInt(document.getElementById('maneuverability').textContent);
-                currentShip.speed = parseInt(document.getElementById('tacticalSpeed').textContent);
+                currentShip.speed = parseInt(document.getElementById('tacticalSpeed').textContent.split(' ')[0]); // Extract the speed value
                 currentShip.bp = parseInt(document.getElementById('bulwarkPoints').textContent);
                 currentShip.hp = parseInt(document.getElementById('hullPoints').value);
                 currentShip.ac = parseInt(document.getElementById('armorClass').textContent);
-        
+            
                 currentShip.cargo = {
                     copper: parseInt(document.getElementById('copperInput').value) || 0,
                     silver: parseInt(document.getElementById('silverInput').value) || 0,
@@ -564,31 +575,46 @@
                     platinum: parseInt(document.getElementById('platinumInput').value) || 0,
                     items: document.getElementById('cargoItems').value
                 };
-        
-                // Save weapon modifiers
+            
+                // Save weapon modifiers and HP
                 currentShip.weapons.forEach((weaponKey, index) => {
                     const toHitModifier = parseInt(document.querySelector(`.weapon-to-hit[data-index="${index}"]`).value) || 0;
                     const damageModifier = parseInt(document.querySelector(`.weapon-damage-modifier[data-index="${index}"]`).value) || 0;
+                    const hpInput = document.querySelector(`.weapon-hp[data-index="${index}"]`);
+                    const hp = parseInt(hpInput.value) || 10;
                     if (!currentShip.weaponModifiers) currentShip.weaponModifiers = {};
-                    currentShip.weaponModifiers[weaponKey] = { toHit: toHitModifier, damage: damageModifier };
+                    if (!currentShip.weaponModifiers[weaponKey]) currentShip.weaponModifiers[weaponKey] = {};
+                    currentShip.weaponModifiers[weaponKey] = { toHit: toHitModifier, damage: damageModifier, hp: hp };
                 });
-        
+            
+                // Save module uses
+                if (!currentShip.moduleUses) currentShip.moduleUses = {};
+                currentShip.modules.forEach((moduleKey, index) => {
+                    const module = wildjammerData.modules[moduleKey];
+                    if (module && module.uses) {
+                        const usesCheckboxes = document.querySelectorAll(`.module-use[data-index="${index}"]`);
+                        const usedCount = Array.from(usesCheckboxes).filter(cb => cb.checked).length;
+                        currentShip.moduleUses[moduleKey] = usedCount;
+                    }
+                });
+            
                 // Save updated ship to localStorage
                 const ships = JSON.parse(localStorage.getItem('wildjammerShips')) || {};
                 ships[currentShip.id] = currentShip.toJSON();
                 localStorage.setItem('wildjammerShips', JSON.stringify(ships));
                 console.log('Ship changes saved');
             }
-                function populateDropdown(selectId, data) {
-                    const select = document.getElementById(selectId);
-                    select.innerHTML = '';
-                    for (const [key, value] of Object.entries(data)) {
-                        const option = document.createElement('option');
-                        option.value = key;
-                        option.textContent = value.name;
-                        select.appendChild(option);
-                    }
+            
+            function populateDropdown(selectId, data) {
+                const select = document.getElementById(selectId);
+                select.innerHTML = '';
+                for (const [key, value] of Object.entries(data)) {
+                    const option = document.createElement('option');
+                    option.value = key;
+                    option.textContent = value.name;
+                    select.appendChild(option);
                 }
+            }
             
                 function showModuleDropdown() {
                     document.getElementById('moduleDropdown').classList.remove('hidden');
