@@ -33,6 +33,13 @@
             </div>
 
             <div>
+                <label for="foreMantle" class="block mb-2">Fore Mantle</label>
+                <select id="foreMantle" class="w-full p-2 bg-gray-800 rounded">
+                    <!-- Options will be populated dynamically -->
+                </select>
+            </div>
+
+            <div>
                 <label for="captain" class="block mb-2">Captain</label>
                 <input type="text" id="captain" class="w-full p-2 bg-gray-800 rounded">
             </div>
@@ -76,6 +83,7 @@
                 <label for="fighterHelmsman3" class="block mb-2">Fighter Helmsman 3</label>
                 <input type="text" id="fighterHelmsman3" class="w-full p-2 bg-gray-800 rounded">
             </div>
+            
             <div class="col-span-2">
                 <h2 class="text-xl font-bold mb-2">Crew Selection</h2>
                 <div id="crewSelection" class="grid grid-cols-2 gap-4">
@@ -108,10 +116,31 @@
             helmTypeSelect.appendChild(option);
         }
 
+        // Populate fore mantle options
+        const foreMantleSelect = document.getElementById('foreMantle');
+        for (const [key, value] of Object.entries(wildjammerData.foreMantle)) {
+            const option = document.createElement('option');
+            option.value = key;
+            option.textContent = value.name;
+            foreMantleSelect.appendChild(option);
+        }
+
+        // Populate crew selection inputs
+        const crewSelection = document.getElementById('crewSelection');
+        for (const [key, value] of Object.entries(wildjammerData.crewTypes)) {
+            const div = document.createElement('div');
+            div.innerHTML = `
+                <label for="${key}" class="block mb-2">${value.name}</label>
+                <input type="number" id="${key}" name="${key}" min="0" value="0" class="w-full p-2 bg-gray-800 rounded">
+            `;
+            crewSelection.appendChild(div);
+        }
+
         function createShip() {
             const shipName = document.getElementById('shipName').value;
             const hullType = document.getElementById('hullType').value;
             const helmType = document.getElementById('helmType').value;
+            const foreMantle = document.getElementById('foreMantle').value;
             const captain = document.getElementById('captain').value;
             const helmsman = document.getElementById('helmsman').value;
             const boatswain = document.getElementById('boatswain').value;
@@ -121,15 +150,18 @@
             const fighterHelmsman1 = document.getElementById('fighterHelmsman1').value;
             const fighterHelmsman2 = document.getElementById('fighterHelmsman2').value;
             const fighterHelmsman3 = document.getElementById('fighterHelmsman3').value;
+            
             // Get crew values
             const crew = {};
             for (const key of Object.keys(wildjammerData.crewTypes)) {
                 crew[key] = parseInt(document.getElementById(key).value) || 0;
             }
+
             const newShip = new Ship({
                 name: shipName,
                 hullType: hullType,
                 helmType: helmType,
+                foreMantle: foreMantle,
                 captain: captain,
                 helmsman: helmsman,
                 boatswain: boatswain,
