@@ -15,13 +15,33 @@ class Ship {
         this.fighterHelmsman1 = data.fighterHelmsman1 || '';
         this.fighterHelmsman2 = data.fighterHelmsman2 || '';
         this.fighterHelmsman3 = data.fighterHelmsman3 || '';
-        this.crew = data.crew || [];
         this.weapons = data.weapons || [];
         this.modules = data.modules || [];
         this.upgrades = data.upgrades || [];
         this.cargo = data.cargo || { copper: 0, silver: 0, gold: 0, platinum: 0, items: '' };
         
-        // New properties for hull information
+        // New crew structure
+        if (Array.isArray(data.crew)) {
+            // Convert old array format to new object format
+            this.crew = {
+                greenCrew: data.crew.length,
+                veteranCrew: 0,
+                mercenaries: 0,
+                giffMercenaries: 0,
+                hurwaetiMercenaries: 0
+            };
+        } else {
+            // Use new format or initialize empty
+            this.crew = data.crew || {
+                greenCrew: 0,
+                veteranCrew: 0,
+                mercenaries: 0,
+                giffMercenaries: 0,
+                hurwaetiMercenaries: 0
+            };
+        }
+
+        // Properties for hull information
         this.size = data.size || [0, 0];
         this.ac = data.ac || 0;
         this.hp = data.hp || 0;
@@ -63,7 +83,6 @@ class Ship {
         this.hp += amount;
     }
 
-    // New method to update hull information
     updateHullInfo(hullInfo) {
         this.size = hullInfo.size || this.size;
         this.ac = hullInfo.ac || this.ac;
@@ -76,6 +95,17 @@ class Ship {
         this.maxCrew = hullInfo.crew?.max || this.maxCrew;
         this.cargoCapacity = hullInfo.cargo || this.cargoCapacity;
         this.airEnvelope = hullInfo.air || this.airEnvelope;
+    }
+
+    // New methods for crew management
+    getTotalCrew() {
+        return Object.values(this.crew).reduce((a, b) => a + b, 0);
+    }
+
+    getCrewCost() {
+        return Object.entries(this.crew).reduce((total, [type, count]) => {
+            return total + (wildjammerData.crewTypes[type].cost.month * count);
+        }, 0);
     }
 
     toJSON() {
@@ -98,7 +128,6 @@ class Ship {
             modules: this.modules,
             upgrades: this.upgrades,
             cargo: this.cargo,
-            // New properties in toJSON
             size: this.size,
             ac: this.ac,
             hp: this.hp,
