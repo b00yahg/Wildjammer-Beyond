@@ -76,6 +76,12 @@
                 <label for="fighterHelmsman3" class="block mb-2">Fighter Helmsman 3</label>
                 <input type="text" id="fighterHelmsman3" class="w-full p-2 bg-gray-800 rounded">
             </div>
+            <div class="col-span-2">
+                <h2 class="text-xl font-bold mb-2">Crew Selection</h2>
+                <div id="crewSelection" class="grid grid-cols-2 gap-4">
+                    <!-- Crew selection inputs will be added here dynamically -->
+                </div>
+            </div>
         </div>
 
         <div class="mt-6">
@@ -115,7 +121,11 @@
             const fighterHelmsman1 = document.getElementById('fighterHelmsman1').value;
             const fighterHelmsman2 = document.getElementById('fighterHelmsman2').value;
             const fighterHelmsman3 = document.getElementById('fighterHelmsman3').value;
-
+            // Get crew values
+            const crew = {};
+            for (const key of Object.keys(wildjammerData.crewTypes)) {
+                crew[key] = parseInt(document.getElementById(key).value) || 0;
+            }
             const newShip = new Ship({
                 name: shipName,
                 hullType: hullType,
@@ -128,7 +138,8 @@
                 gunner3: gunner3,
                 fighterHelmsman1: fighterHelmsman1,
                 fighterHelmsman2: fighterHelmsman2,
-                fighterHelmsman3: fighterHelmsman3
+                fighterHelmsman3: fighterHelmsman3,
+                crew: crew
             });
 
             // Update hull information from wildjammerData
