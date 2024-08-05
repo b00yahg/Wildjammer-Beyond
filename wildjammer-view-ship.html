@@ -279,8 +279,9 @@
                 document.getElementById('fighterHelmsman2').textContent = currentShip.fighterHelmsman2;
                 document.getElementById('fighterHelmsman3').textContent = currentShip.fighterHelmsman3;
                 document.getElementById('maneuverability').textContent = currentShip.maneuverability;
-                document.getElementById('tacticalSpeed').textContent = currentShip.speed;
-                document.getElementById('hoverSpeed').textContent = Math.floor(currentShip.speed / 2);
+                const gridMovement = Math.floor(currentShip.speed / 500);
+                document.getElementById('tacticalSpeed').textContent = `${currentShip.speed} (${gridMovement} grids)`;
+                document.getElementById('hoverSpeed').textContent = "20 mph";
                 document.getElementById('bulwarkPoints').textContent = currentShip.bp;
                 document.getElementById('hullPoints').value = currentShip.hp;
                 document.getElementById('armorClass').textContent = currentShip.ac;
@@ -306,7 +307,6 @@
                 document.getElementById('platinumInput').value = currentShip.cargo.platinum;
                 document.getElementById('cargoItems').value = currentShip.cargo.items;
             }
-
             function updateWeaponsList() {
                 console.log('Updating weapons list:', currentShip.weapons);
                 const weaponsList = document.getElementById('weaponsList');
@@ -318,8 +318,13 @@
                         const row = document.createElement('tr');
                         row.innerHTML = `
                             <td class="text-left py-2">${weapon.name}</td>
-                            <td class="text-center py-2"><input type="number" class="bg-gray-800 rounded p-1 w-16 text-center weapon-to-hit" value="${currentShip.weaponModifiers?.[weaponKey]?.toHit || 0}" data-index="${index}"></td>
-                            <td class="text-center py-2">${weapon.damage} + <input type="number" class="bg-gray-800 rounded p-1 w-16 text-center weapon-damage-modifier" value="${currentShip.weaponModifiers?.[weaponKey]?.damage || 0}" data-index="${index}"></td>
+                            <td class="text-center py-2">
+                                <input type="number" class="bg-gray-800 rounded p-1 w-16 text-center weapon-to-hit" value="${currentShip.weaponModifiers?.[weaponKey]?.toHit || 0}" data-index="${index}">
+                            </td>
+                            <td class="text-center py-2">
+                                ${weapon.damage} + 
+                                <input type="number" class="bg-gray-800 rounded p-1 w-16 text-center weapon-damage-modifier" value="${currentShip.weaponModifiers?.[weaponKey]?.damage || 0}" data-index="${index}">
+                            </td>
                             <td class="text-center py-2">${weapon.range.normal}/${weapon.range.long}</td>
                             <td class="text-center py-2">
                                 <div class="flex items-center justify-center">
@@ -339,7 +344,14 @@
                     }
                 });
             }
-            
+            function adjustWeaponHP(index, amount) {
+                const weaponKey = currentShip.weapons[index];
+                if (!currentShip.weaponModifiers) currentShip.weaponModifiers = {};
+                if (!currentShip.weaponModifiers[weaponKey]) currentShip.weaponModifiers[weaponKey] = {};
+                currentShip.weaponModifiers[weaponKey].hp = (currentShip.weaponModifiers[weaponKey].hp || 10) + amount;
+                updateWeaponsList();
+                saveShipChanges();
+            }
             function updateModulesList() {
                 console.log('Updating modules list:', currentShip.modules);
                 const modulesList = document.getElementById('modulesList');
@@ -352,12 +364,16 @@
                             <strong>${module.name}</strong>
                             <p>${module.description}</p>
                             ${module.uses ? `
-                                <label>
-                                    <input type="checkbox" class="module-use" data-index="${index}">
-                                    Use (${module.uses.max} per ${module.uses.per})
-                                </label>
+                                <div class="module-uses" data-index="${index}">
+                                    <label>Uses: 
+                                        <input type="number" class="bg-gray-800 rounded p-1 w-16 text-center module-use-count" 
+                                               value="${currentShip.moduleUses?.[moduleKey] || 0}" 
+                                               min="0" max="${module.uses.max}" data-index="${index}">
+                                        / ${module.uses.max} per ${module.uses.per}
+                                    </label>
+                                </div>
                             ` : ''}
-                            <button class="px-2 py-1 bg-red-600 text-white rounded" onclick="removeModule(${index})">Remove</button>
+                            <button class="px-2 py-1 bg-red-600 text-white rounded mt-2" onclick="removeModule(${index})">Remove</button>
                         `;
                         modulesList.appendChild(li);
                     } else {
@@ -365,7 +381,6 @@
                     }
                 });
             }
-            
             function updateUpgradesList() {
                 console.log('Updating upgrades list:', currentShip.upgrades);
                 const upgradesList = document.getElementById('upgradesList');
@@ -552,11 +567,11 @@
                 currentShip.fighterHelmsman2 = document.getElementById('fighterHelmsman2').textContent;
                 currentShip.fighterHelmsman3 = document.getElementById('fighterHelmsman3').textContent;
                 currentShip.maneuverability = parseInt(document.getElementById('maneuverability').textContent);
-                currentShip.speed = parseInt(document.getElementById('tacticalSpeed').textContent);
+                currentShip.speed = parseInt(document.getElementById('tacticalSpeed').textContent.split(' ')[0]); // Extract the speed value
                 currentShip.bp = parseInt(document.getElementById('bulwarkPoints').textContent);
                 currentShip.hp = parseInt(document.getElementById('hullPoints').value);
                 currentShip.ac = parseInt(document.getElementById('armorClass').textContent);
-        
+            
                 currentShip.cargo = {
                     copper: parseInt(document.getElementById('copperInput').value) || 0,
                     silver: parseInt(document.getElementById('silverInput').value) || 0,
@@ -564,31 +579,46 @@
                     platinum: parseInt(document.getElementById('platinumInput').value) || 0,
                     items: document.getElementById('cargoItems').value
                 };
-        
-                // Save weapon modifiers
+            
+                // Save weapon modifiers and HP
                 currentShip.weapons.forEach((weaponKey, index) => {
                     const toHitModifier = parseInt(document.querySelector(`.weapon-to-hit[data-index="${index}"]`).value) || 0;
                     const damageModifier = parseInt(document.querySelector(`.weapon-damage-modifier[data-index="${index}"]`).value) || 0;
+                    const hpInput = document.querySelector(`.weapon-hp[data-index="${index}"]`);
+                    const hp = parseInt(hpInput.value) || 10;
                     if (!currentShip.weaponModifiers) currentShip.weaponModifiers = {};
-                    currentShip.weaponModifiers[weaponKey] = { toHit: toHitModifier, damage: damageModifier };
+                    if (!currentShip.weaponModifiers[weaponKey]) currentShip.weaponModifiers[weaponKey] = {};
+                    currentShip.weaponModifiers[weaponKey] = { toHit: toHitModifier, damage: damageModifier, hp: hp };
                 });
-        
+            
+                // Save module uses
+                if (!currentShip.moduleUses) currentShip.moduleUses = {};
+                currentShip.modules.forEach((moduleKey, index) => {
+                    const module = wildjammerData.modules[moduleKey];
+                    if (module && module.uses) {
+                        const useCountInput = document.querySelector(`.module-use-count[data-index="${index}"]`);
+                        const usedCount = parseInt(useCountInput.value) || 0;
+                        currentShip.moduleUses[moduleKey] = usedCount;
+                    }
+                });
+            
                 // Save updated ship to localStorage
                 const ships = JSON.parse(localStorage.getItem('wildjammerShips')) || {};
                 ships[currentShip.id] = currentShip.toJSON();
                 localStorage.setItem('wildjammerShips', JSON.stringify(ships));
                 console.log('Ship changes saved');
             }
-                function populateDropdown(selectId, data) {
-                    const select = document.getElementById(selectId);
-                    select.innerHTML = '';
-                    for (const [key, value] of Object.entries(data)) {
-                        const option = document.createElement('option');
-                        option.value = key;
-                        option.textContent = value.name;
-                        select.appendChild(option);
-                    }
+            
+            function populateDropdown(selectId, data) {
+                const select = document.getElementById(selectId);
+                select.innerHTML = '';
+                for (const [key, value] of Object.entries(data)) {
+                    const option = document.createElement('option');
+                    option.value = key;
+                    option.textContent = value.name;
+                    select.appendChild(option);
                 }
+            }
             
                 function showModuleDropdown() {
                     document.getElementById('moduleDropdown').classList.remove('hidden');
