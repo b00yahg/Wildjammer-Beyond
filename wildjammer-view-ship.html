@@ -289,9 +289,7 @@
                 const helmInfo = wildjammerData.helms[currentShip.helmType];
                 document.getElementById('helmName').textContent = helmInfo.name;
                 document.getElementById('helmDescription').textContent = helmInfo.description;
-                // Add this new part to display properties
-                const helmPropertiesList = document.getElementById('helmProperties');
-                helmPropertiesList.innerHTML = helmInfo.properties.map(prop => `<li>• ${prop}</li>`).join('');
+                document.getElementById('helmProperties').textContent = helmInfo.description;
         
                 // Update weapons list
                 updateWeaponsList();
