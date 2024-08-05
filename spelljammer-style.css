@@ -1,0 +1,224 @@
+:root {
+  /* Light mode colors inspired by Image 2 */
+  --light-bg: #f0f8ff;
+  --light-text: #333366;
+  --light-accent1: #ff6b6b;
+  --light-accent2: #4ecdc4;
+  --light-card-bg: #ffffff;
+  --light-card-border: #d6be34;
+
+  /* Dark mode colors inspired by Image 1 */
+  --dark-bg: #0a0a2a;
+  --dark-text: #e0e0ff;
+  --dark-accent1: #9d4edd;
+  --dark-accent2: #5a189a;
+  --dark-card-bg: #1a1a3a;
+  --dark-card-border: #3a0ca3;
+
+  /* Common colors */
+  --nebula1: #ff61d2;
+  --nebula2: #7e6bf5;
+  --star: #fffacd;
+  --golden: #cab644;
+}
+
+body {
+  font-family: 'Space Mono', monospace;
+  transition: background-color 0.3s, color 0.3s;
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+}
+
+body.light-mode {
+  background-color: var(--light-bg);
+  color: var(--light-text);
+  background-image: linear-gradient(45deg, #4ecdc4, #ff6b6b, #45b7d1, #f7b733);
+}
+
+body.dark-mode {
+  background-color: var(--dark-bg);
+  color: var(--dark-text);
+  background-image: linear-gradient(45deg, #0a0a2a, #3a0ca3, #5a189a, #7209b7);
+}
+
+h1, h2, h3 {
+  font-family: 'Orbitron', sans-serif;
+}
+
+.container {
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 20px;
+  margin-top: 20px;
+  border: 2px solid var(--golden);
+}
+
+.light-mode .container {
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+.dark-mode .container {
+  background-color: rgba(10, 10, 42, 0.7);
+}
+
+.ship-card, .module-card, .weapon-card, .upgrade-card {
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+}
+
+.light-mode .ship-card, .light-mode .module-card, .light-mode .weapon-card, .light-mode .upgrade-card {
+  background-color: var(--light-card-bg);
+  border: 1px solid var(--light-card-border);
+}
+
+.dark-mode .ship-card, .dark-mode .module-card, .dark-mode .weapon-card, .dark-mode .upgrade-card {
+  background-color: var(--dark-card-bg);
+  border: 1px solid var(--dark-card-border);
+}
+
+.ship-card:hover, .module-card:hover, .weapon-card:hover, .upgrade-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(255, 215, 0, 0.4);
+}
+
+button {
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.1s;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+}
+
+button:hover {
+  transform: translateY(-2px);
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+.light-mode button {
+  background-color: var(--light-accent1);
+  color: white;
+}
+
+.light-mode button:hover {
+  background-color: var(--light-accent2);
+}
+
+.dark-mode button {
+  background-color: var(--dark-accent1);
+  color: white;
+}
+
+.dark-mode button:hover {
+  background-color: var(--dark-accent2);
+}
+
+input[type="text"], input[type="number"], select, textarea {
+  border-radius: 5px;
+  padding: 8px;
+  border: 1px solid var(--golden);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.light-mode input[type="text"], .light-mode input[type="number"], .light-mode select, .light-mode textarea {
+  background-color: rgba(255, 255, 255, 0.8);
+  color: var(--light-text);
+}
+
+.dark-mode input[type="text"], .dark-mode input[type="number"], .dark-mode select, .dark-mode textarea {
+  background-color: rgba(26, 26, 58, 0.8);
+  color: var(--dark-text);
+}
+
+.light-mode input[type="text"]:focus, .light-mode input[type="number"]:focus, .light-mode select:focus, .light-mode textarea:focus {
+  border-color: var(--light-accent1);
+  box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+}
+
+.dark-mode input[type="text"]:focus, .dark-mode input[type="number"]:focus, .dark-mode select:focus, .dark-mode textarea:focus {
+  border-color: var(--dark-accent1);
+  box-shadow: 0 0 10px rgba(157, 78, 221, 0.5);
+}
+
+/* Nebula-inspired gradient text */
+.nebula-text {
+  background: linear-gradient(45deg, var(--nebula1), var(--nebula2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+/* Star-like twinkling effect */
+.star-twinkle {
+  position: relative;
+}
+
+.star-twinkle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  background-color: var(--star);
+  border-radius: 50%;
+  animation: twinkle 1.5s infinite alternate;
+}
+
+@keyframes twinkle {
+  0% { opacity: 0.2; transform: scale(0.8); }
+  100% { opacity: 1; transform: scale(1.2); }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--golden);
+  border-radius: 5px;
+}
+
+/* Background image selection */
+#bgImageSelect {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: var(--golden);
+  border: 1px solid var(--golden);
+}
+
+/* Cosmic dust particles */
+.cosmic-dust {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.dust-particle {
+  position: absolute;
+  background-color: rgba(255, 215, 0, 0.6);
+  border-radius: 50%;
+  animation: float 20s infinite linear;
+}
+
+@keyframes float {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(-100vh) rotate(360deg); }
+}
