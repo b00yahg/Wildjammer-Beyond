@@ -208,40 +208,40 @@
 
     <div id="overlay" class="overlay"></div>
         <script>
-            let currentShip;
-            let editMode = false;
-        
-            document.addEventListener('DOMContentLoaded', function() {
-                const urlParams = new URLSearchParams(window.location.search);
-                const shipId = urlParams.get('id');
-                loadShip(shipId);
-        
-                document.getElementById('editModeToggle').addEventListener('click', toggleEditMode);
-                document.getElementById('darkModeToggle').addEventListener('click', toggleDarkMode);
-                document.getElementById('decreaseHP').addEventListener('click', () => adjustHullPoints(-1));
-                document.getElementById('increaseHP').addEventListener('click', () => adjustHullPoints(1));
-                document.getElementById('addModule').addEventListener('click', showModuleDropdown);
-                document.getElementById('addWeapon').addEventListener('click', showWeaponDropdown);
-                document.getElementById('addUpgrade').addEventListener('click', showUpgradeDropdown);
-                document.getElementById('closePopup').addEventListener('click', closePopup);
-        
-                document.getElementById('confirmAddModule').addEventListener('click', confirmAddModule);
-                document.getElementById('cancelAddModule').addEventListener('click', hideModuleDropdown);
-                document.getElementById('confirmAddWeapon').addEventListener('click', confirmAddWeapon);
-                document.getElementById('cancelAddWeapon').addEventListener('click', hideWeaponDropdown);
-                document.getElementById('confirmAddUpgrade').addEventListener('click', confirmAddUpgrade);
-                document.getElementById('cancelAddUpgrade').addEventListener('click', hideUpgradeDropdown);
-        
-                // Add event listeners for cargo inputs
-                ['copperInput', 'silverInput', 'goldInput', 'platinumInput', 'cargoItems'].forEach(id => {
-                    document.getElementById(id).addEventListener('change', saveShipChanges);
-                });
-        
-                // Populate dropdowns
-                populateDropdown('moduleSelect', wildjammerData.modules);
-                populateDropdown('weaponSelect', wildjammerData.weapons);
-                populateDropdown('upgradeSelect', wildjammerData.upgrades);
-            });   
+        let currentShip;
+        let editMode = false;
+    
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const shipId = urlParams.get('id');
+            loadShip(shipId);
+    
+            document.getElementById('editModeToggle').addEventListener('click', toggleEditMode);
+            document.getElementById('toggleDarkMode').addEventListener('click', toggleDarkMode);
+            document.getElementById('decreaseHP').addEventListener('click', () => adjustHullPoints(-1));
+            document.getElementById('increaseHP').addEventListener('click', () => adjustHullPoints(1));
+            document.getElementById('addModule').addEventListener('click', showModuleDropdown);
+            document.getElementById('addWeapon').addEventListener('click', showWeaponDropdown);
+            document.getElementById('addUpgrade').addEventListener('click', showUpgradeDropdown);
+            document.getElementById('closePopup').addEventListener('click', closePopup);
+    
+            document.getElementById('confirmAddModule').addEventListener('click', confirmAddModule);
+            document.getElementById('cancelAddModule').addEventListener('click', hideModuleDropdown);
+            document.getElementById('confirmAddWeapon').addEventListener('click', confirmAddWeapon);
+            document.getElementById('cancelAddWeapon').addEventListener('click', hideWeaponDropdown);
+            document.getElementById('confirmAddUpgrade').addEventListener('click', confirmAddUpgrade);
+            document.getElementById('cancelAddUpgrade').addEventListener('click', hideUpgradeDropdown);
+    
+            // Add event listeners for cargo inputs
+            ['copperInput', 'silverInput', 'goldInput', 'platinumInput', 'cargoItems'].forEach(id => {
+                document.getElementById(id).addEventListener('change', saveShipChanges);
+            });
+    
+            // Populate dropdowns
+            populateDropdown('moduleSelect', wildjammerData.modules);
+            populateDropdown('weaponSelect', wildjammerData.weapons);
+            populateDropdown('upgradeSelect', wildjammerData.upgrades);
+        });   
             function loadShip(shipId) {
                 const ships = JSON.parse(localStorage.getItem('wildjammerShips')) || {};
                 const shipData = ships[shipId];
@@ -612,13 +612,13 @@
                 }
             }
             
-                function showModuleDropdown() {
-                    document.getElementById('moduleDropdown').classList.remove('hidden');
-                }
-            
-                function hideModuleDropdown() {
-                    document.getElementById('moduleDropdown').classList.add('hidden');
-                }
+        function showModuleDropdown() {
+            document.getElementById('moduleDropdown').style.display = 'block';
+        }
+    
+        function hideModuleDropdown() {
+            document.getElementById('moduleDropdown').style.display = 'none';
+        }
             
                 function confirmAddModule() {
                     const moduleKey = document.getElementById('moduleSelect').value;
@@ -632,13 +632,13 @@
                     }
                 }
             
-                function showWeaponDropdown() {
-                    document.getElementById('weaponDropdown').classList.remove('hidden');
-                }
-            
-                function hideWeaponDropdown() {
-                    document.getElementById('weaponDropdown').classList.add('hidden');
-                }
+        function showWeaponDropdown() {
+            document.getElementById('weaponDropdown').style.display = 'block';
+        }
+    
+        function hideWeaponDropdown() {
+            document.getElementById('weaponDropdown').style.display = 'none';
+        }
             
                 function confirmAddWeapon() {
                     const weaponKey = document.getElementById('weaponSelect').value;
@@ -652,13 +652,13 @@
                     }
                 }
             
-                function showUpgradeDropdown() {
-                    document.getElementById('upgradeDropdown').classList.remove('hidden');
-                }
-            
-                function hideUpgradeDropdown() {
-                    document.getElementById('upgradeDropdown').classList.add('hidden');
-                }
+        function showUpgradeDropdown() {
+            document.getElementById('upgradeDropdown').style.display = 'block';
+        }
+    
+        function hideUpgradeDropdown() {
+            document.getElementById('upgradeDropdown').style.display = 'none';
+        }
             
                 function confirmAddUpgrade() {
                     const upgradeKey = document.getElementById('upgradeSelect').value;
@@ -675,34 +675,34 @@
                 }
 
         </script>
-    <div id="moduleDropdown" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-4 rounded shadow-lg">
-    <select id="moduleSelect" class="w-full p-2 rounded">
-        <!-- Options will be populated dynamically -->
-    </select>
-    <div class="mt-4 flex justify-end">
-        <button id="confirmAddModule" class="px-4 py-2 rounded hover transition duration-300 mr-2">Add</button>
-        <button id="cancelAddModule" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition duration-300">Cancel</button>
+    <div id="moduleDropdown" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-800 p-4 rounded shadow-lg">
+        <select id="moduleSelect" class="w-full p-2 bg-gray-700 text-white rounded">
+            <!-- Options will be populated dynamically -->
+        </select>
+        <div class="mt-4 flex justify-end">
+            <button id="confirmAddModule" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300 mr-2">Add</button>
+            <button id="cancelAddModule" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition duration-300">Cancel</button>
+        </div>
     </div>
-</div>
-
-<div id="weaponDropdown" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-800 p-4 rounded shadow-lg">
-    <select id="weaponSelect" class="w-full p-2 bg-gray-700 text-white rounded">
-        <!-- Options will be populated dynamically -->
-    </select>
-    <div class="mt-4 flex justify-end">
-        <button id="confirmAddWeapon" class="px-4 py-2 rounded hover:bg-blue-700 transition duration-300 mr-2">Add</button>
-        <button id="cancelAddWeapon" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition duration-300">Cancel</button>
+    
+    <div id="weaponDropdown" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-800 p-4 rounded shadow-lg">
+        <select id="weaponSelect" class="w-full p-2 bg-gray-700 text-white rounded">
+            <!-- Options will be populated dynamically -->
+        </select>
+        <div class="mt-4 flex justify-end">
+            <button id="confirmAddWeapon" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300 mr-2">Add</button>
+            <button id="cancelAddWeapon" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition duration-300">Cancel</button>
+        </div>
     </div>
-</div>
-
-<div id="upgradeDropdown" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-800 p-4 rounded shadow-lg">
-    <select id="upgradeSelect" class="w-full p-2 bg-gray-700 text-white rounded">
-        <!-- Options will be populated dynamically -->
-    </select>
-    <div class="mt-4 flex justify-end">
-        <button id="confirmAddUpgrade" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300 mr-2">Add</button>
-        <button id="cancelAddUpgrade" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition duration-300">Cancel</button>
+    
+    <div id="upgradeDropdown" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-800 p-4 rounded shadow-lg">
+        <select id="upgradeSelect" class="w-full p-2 bg-gray-700 text-white rounded">
+            <!-- Options will be populated dynamically -->
+        </select>
+        <div class="mt-4 flex justify-end">
+            <button id="confirmAddUpgrade" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300 mr-2">Add</button>
+            <button id="cancelAddUpgrade" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition duration-300">Cancel</button>
+        </div>
     </div>
-</div>
 </body>
 </html>
