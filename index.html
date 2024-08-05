@@ -6,32 +6,18 @@
     <title>Wildjammer Ship Management</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Space+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="spelljammer-style.css">
+    <script src="theme-switcher.js" defer></script>
     <style>
-        body {
-            font-family: 'Space Mono', monospace;
-            background-image: url('https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
-            background-size: cover;
-            background-attachment: fixed;
-            color: #e2e8f0;
-        }
-        h1, h2, h3 {
-            font-family: 'Orbitron', sans-serif;
-        }
+        /* These styles are kept for specific layout purposes */
         .container {
             backdrop-filter: blur(10px);
-            background-color: rgba(0, 0, 0, 0.7);
         }
         .ship-card {
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
             transition: all 0.3s ease;
         }
         .ship-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-        .dark-mode {
-            background-image: url('https://images.unsplash.com/photo-1465101162946-4377e57745c3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
         }
     </style>
 </head>
