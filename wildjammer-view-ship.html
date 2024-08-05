@@ -43,8 +43,8 @@
         <div class="mb-4 flex justify-between items-center">
             <a href="index.html" class="text-blue-500 hover:text-blue-400">Back to Ship List</a>
             <div>
-                <button id="editModeToggle" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300 mr-2">Toggle Edit Mode</button>
-                <button id="toggleDarkMode" class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition duration-300">Toggle Dark Mode</button>
+                <button id="editModeToggle" class="px-4 py-2 rounded hover transition duration-300 mr-2">Toggle Edit Mode</button>
+                <button id="toggleDarkMode" class="px-4 py-2 rounded hover transition duration-300">Toggle Dark Mode</button>
             </div>
         </div>
 
@@ -140,7 +140,7 @@
                     <ul id="modulesList">
                         <!-- Modules will be added here dynamically -->
                     </ul>
-                    <button id="addModule" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300">Add Module</button>
+                    <button id="addModule" class="mt-2 px-4 py-2 rounded hover transition duration-300">Add Module</button>
                 </div>
             </div>
 
@@ -161,7 +161,7 @@
                         <!-- Weapons will be added here dynamically -->
                     </tbody>
                 </table>
-                <button id="addWeapon" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300">Add Weapon</button>
+                <button id="addWeapon" class="mt-2 px-4 py-2 rounded hover transition duration-300">Add Weapon</button>
             </div>
 
             <div class="mb-4">
@@ -169,7 +169,7 @@
                 <ul id="upgradesList">
                     <!-- Upgrades will be added here dynamically -->
                 </ul>
-                <button id="addUpgrade" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300">Add Upgrade</button>
+                <button id="addUpgrade" class="mt-2 px-4 py-2 rounded hover transition duration-300">Add Upgrade</button>
             </div>
 
             <div class="mb-4">
@@ -177,24 +177,24 @@
                 <div class="grid grid-cols-4 gap-4">
                     <div>
                         <label for="copperInput">Copper:</label>
-                        <input type="number" id="copperInput" class="w-full bg-gray-800 rounded p-1" value="0">
+                        <input type="number" id="copperInput" class="w-full rounded p-1" value="0">
                     </div>
                     <div>
                         <label for="silverInput">Silver:</label>
-                        <input type="number" id="silverInput" class="w-full bg-gray-800 rounded p-1" value="0">
+                        <input type="number" id="silverInput" class="w-full rounded p-1" value="0">
                     </div>
                     <div>
                         <label for="goldInput">Gold:</label>
-                        <input type="number" id="goldInput" class="w-full bg-gray-800 rounded p-1" value="0">
+                        <input type="number" id="goldInput" class="w-full rounded p-1" value="0">
                     </div>
                     <div>
                         <label for="platinumInput">Platinum:</label>
-                        <input type="number" id="platinumInput" class="w-full bg-gray-800 rounded p-1" value="0">
+                        <input type="number" id="platinumInput" class="w-full rounded p-1" value="0">
                     </div>
                 </div>
                 <div class="mt-4">
                     <label for="cargoItems">Cargo Items:</label>
-                    <textarea id="cargoItems" class="w-full bg-gray-800 rounded p-2" rows="4"></textarea>
+                    <textarea id="cargoItems" class="w-full rounded p-2" rows="4"></textarea>
                 </div>
             </div>
         </div>
@@ -203,7 +203,7 @@
     <div id="popup" class="popup">
         <h2 class="text-2xl font-bold mb-2">Dice Roll Result</h2>
         <p id="rollResult"></p>
-        <button id="closePopup" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300">Close</button>
+        <button id="closePopup" class="mt-4 px-4 py-2 rounded hover transition duration-300">Close</button>
     </div>
 
     <div id="overlay" class="overlay"></div>
@@ -318,23 +318,23 @@
                         row.innerHTML = `
                             <td class="text-left py-2">${weapon.name}</td>
                             <td class="text-center py-2">
-                                <input type="number" class="bg-gray-800 rounded p-1 w-16 text-center weapon-to-hit" value="${currentShip.weaponModifiers?.[weaponKey]?.toHit || 0}" data-index="${index}">
+                                <input type="number" class="rounded p-1 w-16 text-center weapon-to-hit" value="${currentShip.weaponModifiers?.[weaponKey]?.toHit || 0}" data-index="${index}">
                             </td>
                             <td class="text-center py-2">
                                 ${weapon.damage} + 
-                                <input type="number" class="bg-gray-800 rounded p-1 w-16 text-center weapon-damage-modifier" value="${currentShip.weaponModifiers?.[weaponKey]?.damage || 0}" data-index="${index}">
+                                <input type="number" class="rounded p-1 w-16 text-center weapon-damage-modifier" value="${currentShip.weaponModifiers?.[weaponKey]?.damage || 0}" data-index="${index}">
                             </td>
                             <td class="text-center py-2">${weapon.range.normal}/${weapon.range.long}</td>
                             <td class="text-center py-2">
                                 <div class="flex items-center justify-center">
                                     <button class="px-2 py-1 bg-red-600 text-white rounded mr-2" onclick="adjustWeaponHP(${index}, -1)">-</button>
-                                    <input type="number" class="bg-gray-800 rounded p-1 w-16 text-center weapon-hp" value="${currentShip.weaponModifiers?.[weaponKey]?.hp || 10}" data-index="${index}" readonly>
+                                    <input type="number" class="rounded p-1 w-16 text-center weapon-hp" value="${currentShip.weaponModifiers?.[weaponKey]?.hp || 10}" data-index="${index}" readonly>
                                     <button class="px-2 py-1 bg-green-600 text-white rounded ml-2" onclick="adjustWeaponHP(${index}, 1)">+</button>
                                 </div>
                             </td>
                             <td class="text-center py-2">
-                                <button class="px-2 py-1 bg-blue-600 text-white rounded mr-2" onclick="rollWeaponAttack(${index})">Roll</button>
-                                <button class="px-2 py-1 bg-red-600 text-white rounded" onclick="removeWeapon(${index})">Remove</button>
+                                <button class="px-2 py-1 rounded mr-2" onclick="rollWeaponAttack(${index})">Roll</button>
+                                <button class="px-2 py-1 rounded" onclick="removeWeapon(${index})">Remove</button>
                             </td>
                         `;
                         weaponsList.appendChild(row);
@@ -365,7 +365,7 @@
                             ${module.uses ? `
                                 <div class="module-uses" data-index="${index}">
                                     <label>Uses: 
-                                        <input type="number" class="bg-gray-800 rounded p-1 w-16 text-center module-use-count" 
+                                        <input type="number" class="rounded p-1 w-16 text-center module-use-count" 
                                                value="${currentShip.moduleUses?.[moduleKey] || 0}" 
                                                min="0" max="${module.uses.max}" data-index="${index}">
                                         / ${module.uses.max} per ${module.uses.per}
@@ -410,13 +410,6 @@
                 if (!editMode) {
                     saveShipChanges();
                 }
-            }
-        
-            function toggleDarkMode() {
-                document.body.classList.toggle('bg-white');
-                document.body.classList.toggle('text-black');
-                document.body.classList.toggle('bg-gray-900');
-                document.body.classList.toggle('text-white');
             }
         
             function adjustHullPoints(amount) {
@@ -682,12 +675,12 @@
                 }
 
         </script>
-    <div id="moduleDropdown" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-800 p-4 rounded shadow-lg">
-    <select id="moduleSelect" class="w-full p-2 bg-gray-700 text-white rounded">
+    <div id="moduleDropdown" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-4 rounded shadow-lg">
+    <select id="moduleSelect" class="w-full p-2 rounded">
         <!-- Options will be populated dynamically -->
     </select>
     <div class="mt-4 flex justify-end">
-        <button id="confirmAddModule" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300 mr-2">Add</button>
+        <button id="confirmAddModule" class="px-4 py-2 rounded hover transition duration-300 mr-2">Add</button>
         <button id="cancelAddModule" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition duration-300">Cancel</button>
     </div>
 </div>
@@ -697,7 +690,7 @@
         <!-- Options will be populated dynamically -->
     </select>
     <div class="mt-4 flex justify-end">
-        <button id="confirmAddWeapon" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300 mr-2">Add</button>
+        <button id="confirmAddWeapon" class="px-4 py-2 rounded hover:bg-blue-700 transition duration-300 mr-2">Add</button>
         <button id="cancelAddWeapon" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition duration-300">Cancel</button>
     </div>
 </div>
