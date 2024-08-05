@@ -1,10 +1,10 @@
 :root {
   /* Light mode colors inspired by Image 2 */
-  --light-bg: #f0f8ff;
+  --light-bg: #d2fdf3;
   --light-text: #333366;
   --light-accent1: #ff6b6b;
   --light-accent2: #4ecdc4;
-  --light-card-bg: #ffffff;
+  --light-card-bg: #b3caeb;
   --light-card-border: #d6be34;
 
   /* Dark mode colors inspired by Image 1 */
