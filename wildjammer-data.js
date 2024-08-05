@@ -789,33 +789,6 @@ const wildjammerData = {
             description: "Adds a turret platform to one of the ship's hardpoints. A Gunner using a weapon mounted on this hardpoint can use a bonus action to change the weapon's facing, increasing flexibility in combat. This upgrade can be purchased multiple times for different hardpoints."
         }
     },
-   crewTypes: {
-        greenCrew: {
-            name: "Green Crew",
-            cost: { day: 1.5, month: 45 },
-            description: "New sailors getting their footing. Not combat ready."
-        },
-        veteranCrew: {
-            name: "Veteran Crew",
-            cost: { day: 3, month: 90 },
-            description: "Experienced sailors. Will defend the ship but won't join boarding parties."
-        },
-        mercenaries: {
-            name: "Mercenaries",
-            cost: { day: 5, month: 150 },
-            description: "Will work alongside the crew, defend the ship, and join in boarding an enemy ship."
-        },
-        giffMercenaries: {
-            name: "Giff Mercenaries",
-            cost: { day: 6.5, month: 195 },
-            description: "Skilled with gunpowder. Reduce weapon backfire chance."
-        },
-        hurwaetiMercenaries: {
-            name: "Hurwaeti Mercenaries",
-            cost: { day: 8, month: 240 },
-            description: "Rare and sought after. Reduce air consumption on the ship."
-        }
-    }, // Added comma here
     foreMantle: {
         ram: {
             name: "Ram",
@@ -925,28 +898,20 @@ const wildjammerData = {
                 "Unattunement Backlash: Functions identically to a minor Wildjammer Helm."
             ]
         },
-        minorWildjammerHelm: {
-            name: "Minor Wildjammer Helm",
+        wildjammerHelm: {
+            name: "Wildjammer Helm",
             type: "Wondrous item, artifact",
             attunement: "requires attunement by a creature with spellcasting or pact magic",
-            value: "100,000gp",
-            description: "This ornamental throne covered in Arcane runes is designed for smaller wildjammers.",
+            value: {
+                minor: "100,000gp",
+                major: "250,000gp"
+            },
+            description: "This ornamental throne covered in Arcane runes comes in two varieties: minor and major.",
             properties: [
-                "Can be installed into wildjammers from schooner (mega small) to frigate (mega large) size.",
-                "Quick Attunement: A spellcaster can immediately attune by expending a 2nd level spell slot.",
-                "Unattunement Backlash: Helmsman is unable to cast spells using spell slots for 1d4 rounds."
-            ]
-        },
-        majorWildjammerHelm: {
-            name: "Major Wildjammer Helm",
-            type: "Wondrous item, artifact",
-            attunement: "requires attunement by a creature with spellcasting or pact magic",
-            value: "250,000gp",
-            description: "This ornamental throne covered in Arcane runes is designed for larger wildjammers.",
-            properties: [
-                "Required for heavy frigates (mega huge) or ships of the line (mega gargantuan).",
-                "Quick Attunement: A spellcaster can immediately attune by expending a 5th-level spell slot.",
-                "Unattunement Backlash: Helmsman is unable to cast spells using spell slots for 2d4 rounds."
+                "Minor variant: Can be installed into wildjammers from schooner (mega small) to frigate (mega large) size.",
+                "Major variant: Required for heavy frigates (mega huge) or ships of the line (mega gargantuan).",
+                "Quick Attunement: A spellcaster can immediately attune by expending a 2nd level spell slot (minor) or 5th-level spell slot (major).",
+                "Unattunement Backlash: Helmsman is unable to cast spells using spell slots for 1d4 rounds (minor) or 2d4 rounds (major)."
             ]
         }
     }
