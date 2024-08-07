@@ -12,7 +12,7 @@
     <script src="theme-switcher.js" defer></script>
 </head>
 <body class="light-mode bg-cover bg-fixed">
-    <div class="starry-background"></div>
+    <div class="background-overlay"></div>
     <div class="cosmic-dust"></div>
     <div class="container mx-auto px-4 py-8 min-h-screen">
         <div class="bg-opacity-80 p-6 rounded-lg shadow-lg">
@@ -41,6 +41,7 @@
             </div>
         </div>
     </div>
+    <select id="bgImageSelect" class="magical-glow"></select>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const shipList = document.getElementById('shipList');
@@ -59,7 +60,7 @@
                 shipList.innerHTML = '';
                 shipsToDisplay.forEach(ship => {
                     const shipCard = document.createElement('div');
-                    shipCard.className = 'ship-card overflow-hidden spelljammer-border p-4';
+                    shipCard.className = 'ship-card spelljammer-border p-4';
                     shipCard.innerHTML = `
                         <h2 class="text-xl font-bold">${ship.name}</h2>
                         <p>${ship.hullType} | ${wildjammerData.hulls[ship.hullType].type}</p>
