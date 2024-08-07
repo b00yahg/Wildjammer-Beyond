@@ -32,18 +32,37 @@ function toggleDarkMode() {
   document.body.classList.toggle('dark-mode');
   document.body.classList.toggle('light-mode');
   localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+
+  // Update background image overlay
+  updateBackgroundOverlay();
 }
 
 // Function to change background image
 function changeBackgroundImage(index) {
   document.body.style.backgroundImage = `url('${backgroundImages[index]}')`;
   localStorage.setItem('backgroundImageIndex', index);
+
+  // Update background image overlay
+  updateBackgroundOverlay();
+}
+
+// Function to update background overlay based on current mode
+function updateBackgroundOverlay() {
+  const isDarkMode = document.body.classList.contains('dark-mode');
+  const overlay = document.querySelector('.background-overlay');
+  if (!overlay) {
+    const newOverlay = document.createElement('div');
+    newOverlay.className = 'background-overlay';
+    document.body.appendChild(newOverlay);
+  }
+  document.body.style.backgroundBlendMode = isDarkMode ? 'soft-light' : 'normal';
 }
 
 // Updated function to create and append background image selector
 function createBackgroundImageSelector() {
   const select = document.createElement('select');
   select.id = 'bgImageSelect';
+  select.className = 'magical-glow';
   
   backgroundImages.forEach((_, index) => {
     const option = document.createElement('option');
@@ -97,4 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Create cosmic dust effect
   createCosmicDust();
+
+  // Initial background overlay update
+  updateBackgroundOverlay();
 });
