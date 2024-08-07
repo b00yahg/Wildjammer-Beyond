@@ -31,7 +31,7 @@ function toggleDarkMode() {
   document.body.classList.toggle('dark-mode');
   document.body.classList.toggle('light-mode');
   localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
-  updateDynamicClasses();
+  updateDynamicClasses();  // Add this line
 }
 
 // Function to change background image
