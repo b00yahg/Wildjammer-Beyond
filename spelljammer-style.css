@@ -32,6 +32,24 @@ body {
   background-position: center;
 }
 
+/* Starry background */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px),
+    radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px),
+    radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 40px);
+  background-size: 550px 550px, 350px 350px, 250px 250px;
+  background-position: 0 0, 40px 60px, 130px 270px;
+  z-index: -1;
+  opacity: 0.3;
+}
+
 body.light-mode {
   background-color: var(--light-bg);
   color: var(--light-text);
@@ -128,6 +146,9 @@ input[type="text"], input[type="number"], select, textarea {
   padding: 8px;
   border: 1px solid var(--golden);
   transition: border-color 0.3s, box-shadow 0.3s;
+  background-color: var(--light-card-bg);
+  border: 2px solid var(--golden);
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
 }
 
 .light-mode input[type="text"], .light-mode input[type="number"], .light-mode select, .light-mode textarea {
@@ -290,4 +311,29 @@ input[type="text"], input[type="number"], select, textarea {
 
 .dark-mode .popup button {
   background-color: var(--dark-accent2);
+}
+
+/* Magical glow effect for buttons and important elements */
+.magical-glow {
+  box-shadow: 0 0 10px var(--nebula1), 0 0 20px var(--nebula2);
+  transition: box-shadow 0.3s ease;
+}
+
+.magical-glow:hover {
+  box-shadow: 0 0 15px var(--nebula1), 0 0 30px var(--nebula2);
+}
+
+/* Nautical-inspired decorative elements */
+.nautical-border {
+  border: 2px solid var(--golden);
+  border-image: url('path-to-rope-border-image.png') 30 round;
+}
+
+/* Constellation animation */
+.star {
+  width: 2px;
+  height: 2px;
+  background-color: white;
+  position: absolute;
+  animation: twinkle 3s infinite;
 }
