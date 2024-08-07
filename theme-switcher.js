@@ -1,423 +1,186 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative&family=Space+Grotesk&family=Spectral&display=swap');
+// Array of background image URLs
+const backgroundImages = [
+  'https://images.ctfassets.net/swt2dsco9mfe/1Q99ur33fjWePT9vfm9RBP/39269626dd25b4ecda2bee48594041a2/2560x1600-jam-3.jpg',
+  'https://images.ctfassets.net/swt2dsco9mfe/14G4ilzoLr30cne2Hrsrjr/97b7bc593b0efb73d270db3813fc6cd8/2560x1600-jam-2.jpg',
+  'https://images.ctfassets.net/swt2dsco9mfe/7cDeMiZ88PEZU1Bn3bJ6ta/10b8b398d5874735a63fb40f3cf33cfa/2560x1600-jam-1.jpg',
+  'https://images.ctfassets.net/swt2dsco9mfe/9LkRuIR6fI50Wp62IvTBS/c7acc5e562433751b25fbb047d27df93/2560x1600-zodiac.jpg',
+  'https://assetsio.gnwcdn.com/dnd-5e-spelljammer-adventures-in-space-artwork.jpg?width=1920&height=1920&fit=bounds&quality=80&format=jpg&auto=webp',
+  'https://www.jpl.nasa.gov/spaceimages/images/wallpaper/PIA17218-1920x1200.jpg',
+  'https://www.jpl.nasa.gov/spaceimages/images/wallpaper/PIA22104-1920x1200.jpg',
+  'https://live.staticflickr.com/65535/52259221868_e86daccb7d_6k.jpg',
+  'https://live.staticflickr.com/65535/52211883799_abf0e1909c_6k.jpg',
+  'https://static.wikia.nocookie.net/spelljammer/images/0/04/Hs-2007-16-a-large_web.jpg/revision/latest?cb=20210610184324', 
+  'https://i.ibb.co/DQkcyhk/OH-time-to-spelljammer-for-sure-waifu2x-noise0-scale4x.png',
+  'https://assetsio.gnwcdn.com/spelljammer-dnd-2e-artwork.png?width=1920&height=1920&fit=bounds&quality=80&format=jpg&auto=webp',
+  'https://static1.cbrimages.com/wordpress/wp-content/uploads/2022/04/Dungeons-Dragons-Spelljammer-Pirates-Cropped.jpg',
+  'https://images.rawpixel.com/image_800/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvcm0yMDktYWRqLTEzLWcuanBn.jpg',
+  'https://images.squarespace-cdn.com/content/v1/5cd1c8e165a707bd044a52b7/1573971953743-NC8MKRWBMOHZZSUFZ4A0/ke17ZwdGBToddI8pDm48kJRqFJ19D4P4EwsC9z3fiewUqsxRUqqbr1mOJYKfIPR7LoDQ9mXPOjoJoqy81S2I8N_N4V1vUb5AoIIIbLZhVYy7Mythp_T-mtop-vrsUOmeInPi9iDjx9w8K4ZfjXt2dkV64dCjSK7Zaaf7dwPYPO_gHf_vjqrS5WJoq1nmwotrP7cJNZlDXbgJNE9ef52e8w/Maria+Angelica+Beatriz+Ramirez+Morelos-Sky+Voyage.jpg?format=1500w',
+  'https://static1.srcdn.com/wordpress/wp-content/uploads/2022/09/Spelljammer-Dead-God-Cover.jpg?q=50&fit=crop&w=1100&h=618&dpr=1.5',
+];
 
-:root {
-  /* Light mode colors inspired by Image 2 */
-  --light-bg: #d2fdf3;
-  --light-text: #333366;
-  --light-accent1: #ff6b6b;
-  --light-accent2: #4ecdc4;
-  --light-card-bg: #b3caeb;
-  --light-card-border: #d6be34;
+// Array of custom names for the backgrounds
+const backgroundNames = [
+  "Spelljammer 1", "Spelljammer 2", "Spelljammer 3", "Spelljammer 4", "Spelljammer 5",
+  "NASA 1", "NASA 2", "NASA 3", "NASA 4", "NASA 5",
+  "Old School 1", "Old School 2", "Old School 3",
+  "Misc 1", "Misc 2", "Misc 3"
+];
 
-  /* Dark mode colors inspired by Image 1 */
-  --dark-bg: #0a0a2a;
-  --dark-text: #e0e0ff;
-  --dark-accent1: #9d4edd;
-  --dark-accent2: #5a189a;
-  --dark-card-bg: #1a1a3a;
-  --dark-card-border: #3a0ca3;
-
-  /* Common colors */
-  --nebula1: #ff61d2;
-  --nebula2: #7e6bf5;
-  --star: #fffacd;
-  --golden: #cab644;
+// Function to switch between light and dark mode
+function toggleDarkMode() {
+  document.body.classList.toggle('dark-mode');
+  document.body.classList.toggle('light-mode');
+  localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+  updateDynamicClasses();
 }
 
-body {
-  font-family: 'Spectral', serif;
-  transition: background-color 0.3s, color 0.3s;
-  background-size: cover;
-  background-attachment: fixed;
-  background-position: center;
+// Function to change background image
+function changeBackgroundImage(index) {
+  document.body.style.backgroundImage = `url('${backgroundImages[index]}')`;
+  localStorage.setItem('backgroundImageIndex', index);
 }
 
-body.light-mode {
-  background-color: var(--light-bg);
-  color: var(--light-text);
-  background-image: linear-gradient(45deg, #4ecdc4, #ff6b6b, #45b7d1, #f7b733);
+// Updated function to create and append background image selector
+function createBackgroundImageSelector() {
+  const select = document.createElement('select');
+  select.id = 'bgImageSelect';
+  
+  backgroundImages.forEach((_, index) => {
+    const option = document.createElement('option');
+    option.value = index;
+    option.textContent = backgroundNames[index] || `Background ${index + 1}`;
+    select.appendChild(option);
+  });
+  
+  select.addEventListener('change', (e) => changeBackgroundImage(e.target.value));
+  document.body.appendChild(select);
 }
 
-body.dark-mode {
-  background-color: var(--dark-bg);
-  color: var(--dark-text);
-  background-image: linear-gradient(45deg, #0a0a2a, #3a0ca3, #5a189a, #7209b7);
+function createCosmicDust() {
+  const dustContainer = document.querySelector('.cosmic-dust');
+  const particleCount = 50;
+
+  for (let i = 0; i < particleCount; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'dust-particle';
+    particle.style.left = `${Math.random() * 100}vw`;
+    particle.style.top = `${Math.random() * 100}vh`;
+    particle.style.width = `${Math.random() * 2 + 1}px`;
+    particle.style.height = particle.style.width;
+    particle.style.animationDuration = `${Math.random() * 10 + 10}s`;
+    particle.style.animationDelay = `${Math.random() * 10}s`;
+    dustContainer.appendChild(particle);
+  }
 }
 
-h1, h2, h3 {
-  font-family: 'Cinzel Decorative', cursive;
+// New function to apply magical glow effect
+function applyMagicalGlow(element) {
+  element.classList.add('magical-glow');
 }
 
-.container {
-  backdrop-filter: blur(10px);
-  border-radius: 15px;
-  padding: 20px;
-  margin-top: 20px;
-  border: 2px solid var(--golden);
+// New function to apply astral text effect
+function applyAstralText(element) {
+  element.classList.add('astral-text');
 }
 
-.light-mode .container {
-  background-color: rgba(255, 255, 255, 0.7);
+// New function to apply constellation background
+function applyConstellationBg(element) {
+  element.classList.add('constellation-bg');
 }
 
-.dark-mode .container {
-  background-color: rgba(10, 10, 42, 0.7);
+// New function to create a crystal ball element
+function createCrystalBall(container) {
+  const crystalBall = document.createElement('div');
+  crystalBall.className = 'crystal-ball';
+  container.appendChild(crystalBall);
 }
 
-.ship-card, .module-card, .weapon-card, .upgrade-card {
-  border-radius: 10px;
-  transition: all 0.3s ease;
-  overflow: hidden;
-  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+// New function to apply steampunk input style
+function applySteampunkInput(input) {
+  input.classList.add('steampunk-input');
 }
 
-.light-mode .ship-card, .light-mode .module-card, .light-mode .weapon-card, .light-mode .upgrade-card {
-  background-color: var(--light-card-bg);
-  border: 1px solid var(--light-card-border);
+// New function to create a loading rune
+function createLoadingRune(container) {
+  const loadingRune = document.createElement('div');
+  loadingRune.className = 'loading-rune';
+  container.appendChild(loadingRune);
 }
 
-.dark-mode .ship-card, .dark-mode .module-card, .dark-mode .weapon-card, .dark-mode .upgrade-card {
-  background-color: var(--dark-card-bg);
-  border: 1px solid var(--dark-card-border);
+// Function to update dynamic classes based on app state
+function updateDynamicClasses() {
+  const isDarkMode = document.body.classList.contains('dark-mode');
+  
+  // Apply magical glow to buttons
+  document.querySelectorAll('button').forEach(applyMagicalGlow);
+  
+  // Apply astral text to headings
+  document.querySelectorAll('h1, h2, h3').forEach(applyAstralText);
+  
+  // Apply constellation background to containers
+  document.querySelectorAll('.container').forEach(applyConstellationBg);
+  
+  // Apply steampunk style to inputs
+  document.querySelectorAll('input, select, textarea').forEach(applySteampunkInput);
+  
+  // Create crystal balls in specific containers (example)
+  document.querySelectorAll('.crystal-ball-container').forEach(createCrystalBall);
+  
+  // Create loading runes where needed (example)
+  document.querySelectorAll('.loading-container').forEach(createLoadingRune);
 }
 
-.ship-card:hover, .module-card:hover, .weapon-card:hover, .upgrade-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(255, 215, 0, 0.4);
+// Initialize theme and background
+document.addEventListener('DOMContentLoaded', () => {
+  // Set initial theme
+  const darkMode = localStorage.getItem('darkMode') === 'true';
+  document.body.classList.add(darkMode ? 'dark-mode' : 'light-mode');
+
+  // Create background image selector
+  createBackgroundImageSelector();
+
+  // Set initial background image
+  const savedBgIndex = localStorage.getItem('backgroundImageIndex');
+  if (savedBgIndex !== null) {
+    changeBackgroundImage(parseInt(savedBgIndex));
+    document.getElementById('bgImageSelect').value = savedBgIndex;
+  }
+
+  // Add event listener to theme toggle button
+  const themeToggle = document.getElementById('toggleDarkMode');
+  if (themeToggle) {
+    themeToggle.addEventListener('click', toggleDarkMode);
+  }
+
+  // Create cosmic dust effect
+  createCosmicDust();
+
+  // Apply dynamic classes
+  updateDynamicClasses();
+});
+
+// Event listeners for dynamic class application
+document.addEventListener('click', (e) => {
+  if (e.target.matches('button')) {
+    applyMagicalGlow(e.target);
+  }
+});
+
+// Example of how to use the loading rune
+function showLoading(container) {
+  createLoadingRune(container);
 }
 
-button {
-  font-family: 'Space Grotesk', sans-serif;
-  border: none;
-  border-radius: 5px;
-  padding: 10px 20px;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.1s;
-  text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+function hideLoading(container) {
+  const loadingRune = container.querySelector('.loading-rune');
+  if (loadingRune) {
+    loadingRune.remove();
+  }
 }
 
-button:hover {
-  transform: translateY(-2px);
-}
-
-button:active {
-  transform: translateY(1px);
-}
-
-.light-mode button {
-  background-color: var(--light-accent1);
-  color: white;
-}
-
-.light-mode button:hover {
-  background-color: var(--light-accent2);
-}
-
-.dark-mode button {
-  background-color: var(--dark-accent1);
-  color: white;
-}
-
-.dark-mode button:hover {
-  background-color: var(--dark-accent2);
-}
-
-input[type="text"], input[type="number"], select, textarea {
-  font-family: 'Space Grotesk', sans-serif;
-  border-radius: 5px;
-  padding: 8px;
-  border: 1px solid var(--golden);
-  transition: border-color 0.3s, box-shadow 0.3s;
-}
-
-.light-mode input[type="text"], .light-mode input[type="number"], .light-mode select, .light-mode textarea {
-  background-color: rgba(255, 255, 255, 0.8);
-  color: var(--light-text);
-}
-
-.dark-mode input[type="text"], .dark-mode input[type="number"], .dark-mode select, .dark-mode textarea {
-  background-color: rgba(26, 26, 58, 0.8);
-  color: var(--dark-text);
-}
-
-.light-mode input[type="text"]:focus, .light-mode input[type="number"]:focus, .light-mode select:focus, .light-mode textarea:focus {
-  border-color: var(--light-accent1);
-  box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
-}
-
-.dark-mode input[type="text"]:focus, .dark-mode input[type="number"]:focus, .dark-mode select:focus, .dark-mode textarea:focus {
-  border-color: var(--dark-accent1);
-  box-shadow: 0 0 10px rgba(157, 78, 221, 0.5);
-}
-
-/* Nebula-inspired gradient text */
-.nebula-text {
-  background: linear-gradient(45deg, var(--nebula1), var(--nebula2));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-}
-
-/* Star-like twinkling effect */
-.star-twinkle {
-  position: relative;
-}
-
-.star-twinkle::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 4px;
-  height: 4px;
-  background-color: var(--star);
-  border-radius: 50%;
-  animation: twinkle 1.5s infinite alternate;
-}
-
-@keyframes twinkle {
-  0% { opacity: 0.2; transform: scale(0.8); }
-  100% { opacity: 1; transform: scale(1.2); }
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--golden);
-  border-radius: 5px;
-}
-
-/* Background image selection */
-#bgImageSelect {
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  z-index: 1000;
-  background-color: rgba(0, 0, 0, 0.5);
-  color: var(--golden);
-  border: 1px solid var(--golden);
-}
-
-/* Cosmic dust particles */
-.cosmic-dust {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: -1;
-}
-
-.dust-particle {
-  position: absolute;
-  background-color: rgba(255, 215, 0, 0.6);
-  border-radius: 50%;
-  animation: float 20s infinite linear;
-}
-
-@keyframes float {
-  0% { transform: translateY(0) rotate(0deg); }
-  100% { transform: translateY(-100vh) rotate(360deg); }
-}
-
-/* Popup styles */
-.popup {
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  padding: 20px;
-  border-radius: 15px;
-  z-index: 1000;
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-  backdrop-filter: blur(10px);
-  border: 2px solid var(--golden);
-  max-width: 80%;
-  width: 400px;
-}
-
-.light-mode .popup {
-  background-color: rgba(255, 255, 255, 0.9);
-  color: var(--light-text);
-}
-
-.dark-mode .popup {
-  background-color: rgba(26, 26, 58, 0.9);
-  color: var(--dark-text);
-}
-
-.popup h2 {
-  margin-bottom: 15px;
-  font-family: 'Cinzel Decorative', cursive;
-}
-
-.popup p {
-  margin-bottom: 15px;
-}
-
-.popup button {
-  display: block;
-  margin: 0 auto;
-}
-
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(5px);
-  z-index: 999;
-}
-
-/* Adjust the existing button styles to fit better with popups */
-.popup button {
-  padding: 8px 16px;
-  font-size: 14px;
-}
-
-.light-mode .popup button {
-  background-color: var(--light-accent2);
-}
-
-.dark-mode .popup button {
-  background-color: var(--dark-accent2);
-}
-
-/* New Spelljammer-inspired enhancements */
-
-/* Magical glow effect for important elements */
-.magical-glow {
-  box-shadow: 0 0 15px var(--golden), 0 0 30px var(--nebula1);
-  transition: box-shadow 0.3s ease;
-}
-
-.magical-glow:hover {
-  box-shadow: 0 0 25px var(--golden), 0 0 50px var(--nebula2);
-}
-
-/* Astral sea-inspired text effect */
-.astral-text {
-  background: linear-gradient(45deg, var(--nebula1), var(--nebula2), var(--star));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-  animation: astral-shimmer 5s infinite alternate;
-}
-
-@keyframes astral-shimmer {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 100% 50%; }
-}
-
-/* Constellation effect for backgrounds */
-.constellation-bg {
-  position: relative;
-  overflow: hidden;
-}
-
-.constellation-bg::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: 
-    radial-gradient(1px 1px at 10px 10px, var(--star), transparent),
-    radial-gradient(1px 1px at 50px 50px, var(--star), transparent),
-    radial-gradient(1px 1px at 100px 100px, var(--star), transparent);
-  background-size: 200px 200px;
-  animation: twinkle 10s infinite linear;
-  opacity: 0.3;
-}
-
-/* Crystal ball-inspired elements */
-.crystal-ball {
-  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.1));
-  border-radius: 50%;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-  position: relative;
-  overflow: hidden;
-}
-
-.crystal-ball::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), transparent);
-  transform: rotate(45deg);
-  animation: crystal-shimmer 5s infinite linear;
-}
-
-@keyframes crystal-shimmer {
-  0% { transform: rotate(45deg) translateY(-50%); }
-  100% { transform: rotate(45deg) translateY(50%); }
-}
-
-/* Steampunk-inspired form elements */
-.steampunk-input {
-  border: 2px solid var(--golden);
-  background-color: rgba(0, 0, 0, 0.1);
-  color: var(--golden);
-  font-family: 'Spectral', serif;
-  padding: 10px;
-  border-radius: 5px;
-  box-shadow: inset 0 0 5px var(--golden);
-  transition: all 0.3s ease;
-}
-
-.steampunk-input:focus {
-  outline: none;
-  box-shadow: inset 0 0 10px var(--golden), 0 0 10px var(--nebula1);
-}
-
-/* Magical rune animation for loading states */
-.loading-rune {
-  width: 50px;
-  height: 50px;
-  border: 3px solid var(--golden);
-  border-radius: 50%;
-  position: relative;
-  animation: rotate-rune 2s infinite linear;
-}
-
-.loading-rune::before,
-.loading-rune::after {
-  content: '';
-  position: absolute;
-  background-color: var(--golden);
-}
-
-.loading-rune::before {
-  width: 20px;
-  height: 3px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.loading-rune::after {
-  width: 3px;
-  height: 20px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-@keyframes rotate-rune {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
+// Example usage:
+// const loadingContainer = document.querySelector('.loading-container');
+// showLoading(loadingContainer);
+// // Perform some asynchronous operation
+// // Then hide the loading rune
+// hideLoading(loadingContainer);
