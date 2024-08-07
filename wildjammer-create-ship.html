@@ -4,93 +4,90 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create/Edit Wildjammer Ship</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative&family=Space+Grotesk&family=Spectral&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="spelljammer-style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="wildjammer-data.js"></script>
     <script src="ship-class.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Space+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="spelljammer-style.css">
+    <script src="theme-switcher.js" defer></script>
 </head>
 <body class="light-mode">
     <div class="cosmic-dust"></div>
-    <div class="container constellation-bg">
-        <button id="toggleDarkMode" class="magical-glow">Toggle Dark Mode</button>
-        <h1 id="createedit-wildjammer-ship" class="astral-text">Create/Edit Wildjammer Ship</h1>
+    <button id="toggleDarkMode" class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition duration-300">Toggle Dark Mode</button>
+    <div class="container mx-auto px-4 py-8">
+        <h1 id="createedit-wildjammer-ship" class="text-4xl font-bold mb-8 text-center text-white">Create/Edit Wildjammer Ship</h1>
 
-        <form id="shipForm" onsubmit="event.preventDefault(); createShip();">
-            <div class="form-grid">
-                <div>
-                    <label for="shipName" class="block mb-2">Ship Name</label>
-                    <input type="text" id="shipName" name="shipName" class="steampunk-input">
-                </div>
-
-                <div>
-                    <label for="hullType" class="block mb-2">Hull Type</label>
-                    <select id="hullType" name="hullType" class="steampunk-input">
-                        <!-- Options will be populated dynamically -->
-                    </select>
-                </div>
-
-                <div>
-                    <label for="helmType" class="block mb-2">Helm Type</label>
-                    <select id="helmType" name="helmType" class="steampunk-input">
-                        <!-- Options will be populated dynamically -->
-                    </select>
-                </div>
-
-                <div>
-                    <label for="captain" class="block mb-2">Captain</label>
-                    <input type="text" id="captain" name="captain" class="steampunk-input">
-                </div>
-
-                <div>
-                    <label for="helmsman" class="block mb-2">Helmsman</label>
-                    <input type="text" id="helmsman" name="helmsman" class="steampunk-input">
-                </div>
-
-                <div>
-                    <label for="boatswain" class="block mb-2">Boatswain</label>
-                    <input type="text" id="boatswain" name="boatswain" class="steampunk-input">
-                </div>
-
-                <div>
-                    <label for="gunner1" class="block mb-2">Gunner 1</label>
-                    <input type="text" id="gunner1" name="gunner1" class="steampunk-input">
-                </div>
-
-                <div>
-                    <label for="gunner2" class="block mb-2">Gunner 2</label>
-                    <input type="text" id="gunner2" name="gunner2" class="steampunk-input">
-                </div>
-
-                <div>
-                    <label for="gunner3" class="block mb-2">Gunner 3</label>
-                    <input type="text" id="gunner3" name="gunner3" class="steampunk-input">
-                </div>
-
-                <div>
-                    <label for="fighterHelmsman1" class="block mb-2">Fighter Helmsman 1</label>
-                    <input type="text" id="fighterHelmsman1" name="fighterHelmsman1" class="steampunk-input">
-                </div>
-
-                <div>
-                    <label for="fighterHelmsman2" class="block mb-2">Fighter Helmsman 2</label>
-                    <input type="text" id="fighterHelmsman2" name="fighterHelmsman2" class="steampunk-input">
-                </div>
-
-                <div>
-                    <label for="fighterHelmsman3" class="block mb-2">Fighter Helmsman 3</label>
-                    <input type="text" id="fighterHelmsman3" name="fighterHelmsman3" class="steampunk-input">
-                </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label for="shipName" class="block mb-2">Ship Name</label>
+                <input type="text" id="shipName" class="w-full p-2 bg-gray-800 rounded">
             </div>
 
-            <div class="form-actions">
-                <button type="submit" class="magical-glow">Create Ship</button>
+            <div>
+                <label for="hullType" class="block mb-2">Hull Type</label>
+                <select id="hullType" class="w-full p-2 bg-gray-800 rounded">
+                    <!-- Options will be populated dynamically -->
+                </select>
             </div>
-        </form>
 
-        <div id="loadingIndicator" class="loading-container" style="display: none;"></div>
+            <div>
+                <label for="helmType" class="block mb-2">Helm Type</label>
+                <select id="helmType" class="w-full p-2 bg-gray-800 rounded">
+                    <!-- Options will be populated dynamically -->
+                </select>
+            </div>
+
+            <div>
+                <label for="captain" class="block mb-2">Captain</label>
+                <input type="text" id="captain" class="w-full p-2 bg-gray-800 rounded">
+            </div>
+
+            <div>
+                <label for="helmsman" class="block mb-2">Helmsman</label>
+                <input type="text" id="helmsman" class="w-full p-2 bg-gray-800 rounded">
+            </div>
+
+            <div>
+                <label for="boatswain" class="block mb-2">Boatswain</label>
+                <input type="text" id="boatswain" class="w-full p-2 bg-gray-800 rounded">
+            </div>
+
+            <div>
+                <label for="gunner1" class="block mb-2">Gunner 1</label>
+                <input type="text" id="gunner1" class="w-full p-2 bg-gray-800 rounded">
+            </div>
+
+            <div>
+                <label for="gunner2" class="block mb-2">Gunner 2</label>
+                <input type="text" id="gunner2" class="w-full p-2 bg-gray-800 rounded">
+            </div>
+
+            <div>
+                <label for="gunner3" class="block mb-2">Gunner 3</label>
+                <input type="text" id="gunner3" class="w-full p-2 bg-gray-800 rounded">
+            </div>
+
+            <div>
+                <label for="fighterHelmsman1" class="block mb-2">Fighter Helmsman 1</label>
+                <input type="text" id="fighterHelmsman1" class="w-full p-2 bg-gray-800 rounded">
+            </div>
+
+            <div>
+                <label for="fighterHelmsman2" class="block mb-2">Fighter Helmsman 2</label>
+                <input type="text" id="fighterHelmsman2" class="w-full p-2 bg-gray-800 rounded">
+            </div>
+
+            <div>
+                <label for="fighterHelmsman3" class="block mb-2">Fighter Helmsman 3</label>
+                <input type="text" id="fighterHelmsman3" class="w-full p-2 bg-gray-800 rounded">
+            </div>
+        </div>
+
+        <div class="mt-6">
+            <button onclick="createShip()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300">Create Ship</button>
+        </div>
     </div>
 
-    <script src="theme-switcher.js"></script>
     <script>
         // Populate hull type options
         const hullTypeSelect = document.getElementById('hullType');
@@ -111,19 +108,46 @@
         }
 
         function createShip() {
-            showLoading(document.getElementById('loadingIndicator'));
-            
-            const formData = new FormData(document.getElementById('shipForm'));
-            const shipData = Object.fromEntries(formData.entries());
-            
-            const newShip = window.createShip(shipData);
-            
+            const shipName = document.getElementById('shipName').value;
+            const hullType = document.getElementById('hullType').value;
+            const helmType = document.getElementById('helmType').value;
+            const captain = document.getElementById('captain').value;
+            const helmsman = document.getElementById('helmsman').value;
+            const boatswain = document.getElementById('boatswain').value;
+            const gunner1 = document.getElementById('gunner1').value;
+            const gunner2 = document.getElementById('gunner2').value;
+            const gunner3 = document.getElementById('gunner3').value;
+            const fighterHelmsman1 = document.getElementById('fighterHelmsman1').value;
+            const fighterHelmsman2 = document.getElementById('fighterHelmsman2').value;
+            const fighterHelmsman3 = document.getElementById('fighterHelmsman3').value;
+
+            const newShip = new Ship({
+                name: shipName,
+                hullType: hullType,
+                helmType: helmType,
+                captain: captain,
+                helmsman: helmsman,
+                boatswain: boatswain,
+                gunner1: gunner1,
+                gunner2: gunner2,
+                gunner3: gunner3,
+                fighterHelmsman1: fighterHelmsman1,
+                fighterHelmsman2: fighterHelmsman2,
+                fighterHelmsman3: fighterHelmsman3
+            });
+
+            // Update hull information from wildjammerData
+            const hullInfo = wildjammerData.hulls[hullType];
+            newShip.updateHullInfo(hullInfo);
+
+            // Save the new ship to localStorage
+            const ships = JSON.parse(localStorage.getItem('wildjammerShips')) || {};
+            ships[newShip.id] = newShip.toJSON();
+            localStorage.setItem('wildjammerShips', JSON.stringify(ships));
+
             // Redirect to the view-ship page
             window.location.href = `wildjammer-view-ship.html?id=${newShip.id}`;
         }
-
-        // Initialize the page
-        window.initializePage();
     </script>
 </body>
 </html>
