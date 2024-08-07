@@ -67,7 +67,8 @@ h1, h2, h3 {
 .ship-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 20px;
+  gap: 30px;
+  margin-top: 30px;
 }
 
 .ship-card {
@@ -80,19 +81,9 @@ h1, h2, h3 {
   height: 100%;
 }
 
-.light-mode .ship-card {
-  background-color: var(--light-card-bg);
-  border: 1px solid var(--light-card-border);
-}
-
-.dark-mode .ship-card {
-  background-color: var(--dark-card-bg);
-  border: 1px solid var(--dark-card-border);
-}
-
-.ship-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(255, 215, 0, 0.4);
+.ship-card-header {
+  padding: 15px;
+  border-bottom: 2px solid var(--golden);
 }
 
 .ship-card-content {
@@ -103,21 +94,48 @@ h1, h2, h3 {
   padding: 15px;
 }
 
+.light-mode .ship-card-header {
+  background-color: var(--light-accent2);
+  color: var(--light-text);
+}
+
+.light-mode .ship-card-content {
+  background-color: var(--light-card-bg);
+}
+
+.dark-mode .ship-card-header {
+  background-color: var(--dark-accent2);
+  color: var(--dark-text);
+}
+
+.dark-mode .ship-card-content {
+  background-color: var(--dark-card-bg);
+}
+
+.ship-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
 button, .magical-glow {
   font-family: 'Space Grotesk', sans-serif;
   border: none;
   border-radius: 5px;
-  padding: 10px 20px;
+  padding: 8px 16px;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.1s, box-shadow 0.3s;
-  text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+  transition: all 0.3s ease;
   text-decoration: none;
   color: inherit;
-  display: inline-block;
+  font-size: 0.9em;
+  background-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
 }
 
 button:hover, .magical-glow:hover {
   transform: translateY(-2px);
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
 }
 
 button:active, .magical-glow:active {
@@ -170,13 +188,27 @@ input[type="text"], input[type="number"], select, textarea {
   box-shadow: 0 0 10px rgba(157, 78, 221, 0.5);
 }
 
-/* Nebula-inspired gradient text */
-.nebula-text {
-  background: linear-gradient(45deg, var(--nebula1), var(--nebula2));
+/* Updated astral text effect for better readability in light mode */
+.astral-text {
+  background: linear-gradient(45deg, var(--nebula1), var(--nebula2), var(--star));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  animation: astral-shimmer 5s infinite alternate;
+}
+
+.light-mode .astral-text {
+  background: linear-gradient(45deg, #4a0e4e, #81236b, #c04d8a);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes astral-shimmer {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
 }
 
 /* Star-like twinkling effect */
@@ -298,31 +330,6 @@ input[type="text"], input[type="number"], select, textarea {
   z-index: 999;
 }
 
-/* Spelljammer-inspired enhancements */
-
-.astral-text {
-  background: linear-gradient(45deg, var(--nebula1), var(--nebula2), var(--star));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-  animation: astral-shimmer 5s infinite alternate;
-}
-
-@keyframes astral-shimmer {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 100% 50%; }
-}
-
-.magical-glow {
-  box-shadow: 0 0 15px var(--golden), 0 0 30px var(--nebula1);
-  transition: box-shadow 0.3s ease;
-}
-
-.magical-glow:hover {
-  box-shadow: 0 0 25px var(--golden), 0 0 50px var(--nebula2);
-}
-
 .constellation-bg {
   position: relative;
   overflow: hidden;
@@ -438,7 +445,141 @@ input[type="text"], input[type="number"], select, textarea {
   }
   
   button, .magical-glow {
-    padding: 8px 16px;
+    padding: 6px 12px;
+    font-size: 0.8em;
+  }
+
+  .ship-card-header,
+  .ship-card-content {
+    padding: 10px;
+  }
+
+  .ship-actions {
+    flex-direction: column;
+    align-items: flex-end;
   }
 }
-</antArtif
+
+/* Header styles */
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.button-container {
+  display: flex;
+  gap: 10px;
+}
+
+/* Search and sort container */
+.search-sort-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.search-sort-container input,
+.search-sort-container select {
+  flex: 1;
+}
+
+/* Loading indicator */
+#loadingIndicator {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+}
+
+/* Additional styles for better visual hierarchy */
+.ship-name {
+  font-size: 1.4em;
+  margin-bottom: 5px;
+}
+
+.ship-type {
+  font-size: 0.9em;
+  opacity: 0.8;
+}
+
+.ship-captain {
+  font-style: italic;
+  margin-bottom: 10px;
+}
+
+/* Enhance the magical glow effect for buttons */
+.magical-glow {
+  position: relative;
+  overflow: hidden;
+}
+
+.magical-glow::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.magical-glow:hover::before {
+  opacity: 1;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.8); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(0.8); }
+}
+
+/* Enhance accessibility */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Focus styles for better keyboard navigation */
+*:focus {
+  outline: 2px solid var(--golden);
+  outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: none;
+    color: black;
+  }
+
+  .container {
+    border: none;
+    box-shadow: none;
+  }
+
+  .ship-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    border: 1px solid #000;
+  }
+
+  .magical-glow,
+  .cosmic-dust,
+  #bgImageSelect,
+  .button-container {
+    display: none;
+  }
+}
