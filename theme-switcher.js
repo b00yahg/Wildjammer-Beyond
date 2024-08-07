@@ -26,12 +26,33 @@ const backgroundNames = [
   "Misc 1", "Misc 2", "Misc 3"
 ];
 
+let ships = [];
+
+// Function to initialize theme
+function initializeTheme() {
+  const storedDarkMode = localStorage.getItem('darkMode');
+  let darkMode;
+  
+  if (storedDarkMode === null) {
+    // If no preference is stored, default to light mode
+    darkMode = false;
+    localStorage.setItem('darkMode', 'false');
+  } else {
+    // Use the stored preference
+    darkMode = storedDarkMode === 'true';
+  }
+
+  document.body.classList.toggle('dark-mode', darkMode);
+  document.body.classList.toggle('light-mode', !darkMode);
+  updateDynamicClasses();
+}
+
 // Function to switch between light and dark mode
 function toggleDarkMode() {
-  document.body.classList.toggle('dark-mode');
-  document.body.classList.toggle('light-mode');
-  localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
-  updateDynamicClasses();  // Add this line
+  const isDarkMode = document.body.classList.toggle('dark-mode');
+  document.body.classList.toggle('light-mode', !isDarkMode);
+  localStorage.setItem('darkMode', isDarkMode.toString());
+  updateDynamicClasses();
 }
 
 // Function to change background image
@@ -40,7 +61,7 @@ function changeBackgroundImage(index) {
   localStorage.setItem('backgroundImageIndex', index);
 }
 
-// Updated function to create and append background image selector
+// Function to create and append background image selector
 function createBackgroundImageSelector() {
   const select = document.createElement('select');
   select.id = 'bgImageSelect';
@@ -73,34 +94,34 @@ function createCosmicDust() {
   }
 }
 
-// New function to apply magical glow effect
+// Function to apply magical glow effect
 function applyMagicalGlow(element) {
   element.classList.add('magical-glow');
 }
 
-// New function to apply astral text effect
+// Function to apply astral text effect
 function applyAstralText(element) {
   element.classList.add('astral-text');
 }
 
-// New function to apply constellation background
+// Function to apply constellation background
 function applyConstellationBg(element) {
   element.classList.add('constellation-bg');
 }
 
-// New function to create a crystal ball element
+// Function to create a crystal ball element
 function createCrystalBall(container) {
   const crystalBall = document.createElement('div');
   crystalBall.className = 'crystal-ball';
   container.appendChild(crystalBall);
 }
 
-// New function to apply steampunk input style
+// Function to apply steampunk input style
 function applySteampunkInput(input) {
   input.classList.add('steampunk-input');
 }
 
-// New function to create a loading rune
+// Function to create a loading rune
 function createLoadingRune(container) {
   const loadingRune = document.createElement('div');
   loadingRune.className = 'loading-rune';
@@ -111,6 +132,30 @@ function createLoadingRune(container) {
 function updateDynamicClasses() {
   const isDarkMode = document.body.classList.contains('dark-mode');
   
+  // Update button styles
+  document.querySelectorAll('button, .magical-glow').forEach(element => {
+    element.classList.toggle('dark-mode', isDarkMode);
+    element.classList.toggle('light-mode', !isDarkMode);
+  });
+  
+  // Update text styles
+  document.querySelectorAll('.astral-text').forEach(element => {
+    element.classList.toggle('dark-mode', isDarkMode);
+    element.classList.toggle('light-mode', !isDarkMode);
+  });
+  
+  // Update input styles
+  document.querySelectorAll('input, select, textarea').forEach(element => {
+    element.classList.toggle('dark-mode', isDarkMode);
+    element.classList.toggle('light-mode', !isDarkMode);
+  });
+
+  // Update ship cards
+  document.querySelectorAll('.ship-card').forEach(element => {
+    element.classList.toggle('dark-mode', isDarkMode);
+    element.classList.toggle('light-mode', !isDarkMode);
+  });
+
   // Apply magical glow to buttons
   document.querySelectorAll('button').forEach(applyMagicalGlow);
   
@@ -130,33 +175,135 @@ function updateDynamicClasses() {
   document.querySelectorAll('.loading-container').forEach(createLoadingRune);
 }
 
+// Function to load and display the list of ships
+function loadShipList() {
+  return new Promise((resolve) => {
+    showLoading(document.getElementById('loadingIndicator'));
+    setTimeout(() => {  // Simulating network delay
+      const storedShips = JSON.parse(localStorage.getItem('wildjammerShips')) || {};
+      ships = Object.values(storedShips).map(shipData => new Ship(shipData));
+      displayShips(ships);
+      hideLoading(document.getElementById('loadingIndicator'));
+      resolve();
+    }, 1000);
+  });
+}
+
+function displayShips(shipsToDisplay) {
+  const shipList = document.getElementById('shipList');
+  shipList.innerHTML = '';
+  shipsToDisplay.forEach(ship => {
+    const shipCard = document.createElement('div');
+    shipCard.className = 'ship-card';
+    shipCard.innerHTML = `
+      <div class="ship-card-header">
+        <h2 class="ship-name astral-text">${ship.name}</h2>
+        <p class="ship-type">${ship.hullType} | ${wildjammerData.hulls[ship.hullType].type}</p>
+      </div>
+      <div class="ship-card-content">
+        <p class="ship-captain">Captain: ${ship.captain}</p>
+        <div class="ship-actions">
+          <a href="wildjammer-view-ship.html?id=${ship.id}" class="magical-glow">VIEW</a>
+          <a href="wildjammer-create-ship.html?id=${ship.id}" class="magical-glow">EDIT</a>
+          <button onclick="deleteShip('${ship.id}')" class="magical-glow">DELETE</button>
+        </div>
+      </div>
+    `;
+    shipList.appendChild(shipCard);
+  });
+  updateDynamicClasses();
+}
+
+function filterShips() {
+  const searchInput = document.getElementById('searchInput');
+  const searchTerm = searchInput.value.toLowerCase();
+  const filteredShips = ships.filter(ship => 
+    ship.name.toLowerCase().includes(searchTerm) ||
+    ship.hullType.toLowerCase().includes(searchTerm) ||
+    wildjammerData.hulls[ship.hullType].type.toLowerCase().includes(searchTerm)
+  );
+  displayShips(filteredShips);
+}
+
+function sortShips() {
+  const sortSelect = document.getElementById('sortSelect');
+  const sortValue = sortSelect.value;
+  const sortedShips = [...ships].sort((a, b) => {
+    switch (sortValue) {
+      case 'nameAsc':
+        return a.name.localeCompare(b.name);
+      case 'nameDesc':
+        return b.name.localeCompare(a.name);
+      case 'sizeAsc':
+        return getSizeOrder(a.hullType) - getSizeOrder(b.hullType);
+      case 'sizeDesc':
+        return getSizeOrder(b.hullType) - getSizeOrder(a.hullType);
+      default:
+        return 0;
+    }
+  });
+  displayShips(sortedShips);
+}
+
+function getSizeOrder(hullType) {
+  const sizeOrder = ['Fighter', 'Schooner', 'Sloop', 'Frigate', 'Heavy Frigate', 'Ship of the Line'];
+  return sizeOrder.indexOf(wildjammerData.hulls[hullType].type);
+}
+
+function deleteShip(shipId) {
+  if (confirm('Are you sure you want to delete this ship?')) {
+    const storedShips = JSON.parse(localStorage.getItem('wildjammerShips')) || {};
+    delete storedShips[shipId];
+    localStorage.setItem('wildjammerShips', JSON.stringify(storedShips));
+    loadShipList().then(updateDynamicClasses);
+  }
+}
+
+function showLoading(container) {
+  createLoadingRune(container);
+  container.style.display = 'block';
+}
+
+function hideLoading(container) {
+  const loadingRune = container.querySelector('.loading-rune');
+  if (loadingRune) {
+    loadingRune.remove();
+  }
+  container.style.display = 'none';
+}
+
 // Initialize theme and background
 document.addEventListener('DOMContentLoaded', () => {
-  // Set initial theme
-  const darkMode = localStorage.getItem('darkMode') === 'true';
-  document.body.classList.add(darkMode ? 'dark-mode' : 'light-mode');
+  initializeTheme();
 
-  // Create background image selector
   createBackgroundImageSelector();
 
-  // Set initial background image
   const savedBgIndex = localStorage.getItem('backgroundImageIndex');
   if (savedBgIndex !== null) {
     changeBackgroundImage(parseInt(savedBgIndex));
     document.getElementById('bgImageSelect').value = savedBgIndex;
   }
 
-  // Add event listener to theme toggle button
   const themeToggle = document.getElementById('toggleDarkMode');
   if (themeToggle) {
     themeToggle.addEventListener('click', toggleDarkMode);
   }
 
-  // Create cosmic dust effect
   createCosmicDust();
 
-  // Apply dynamic classes
-  updateDynamicClasses();
+  loadShipList().then(() => {
+    updateDynamicClasses();
+  });
+
+  const searchInput = document.getElementById('searchInput');
+  if (searchInput) {
+    searchInput.addEventListener('input', filterShips);
+  }
+
+  const sortSelect = document.getElementById('sortSelect');
+  if (sortSelect) {
+    sortSelect.addEventListener('change', sortShips);
+  }
 });
 
 // Event listeners for dynamic class application
@@ -166,21 +313,30 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// Example of how to use the loading rune
-function showLoading(container) {
-  createLoadingRune(container);
-}
+// Make deleteShip function global so it can be called from inline onclick
+window.deleteShip = deleteShip;
 
-function hideLoading(container) {
-  const loadingRune = container.querySelector('.loading-rune');
-  if (loadingRune) {
-    loadingRune.remove();
+// Global function to handle ship creation (if needed)
+window.createShip = function(shipData) {
+  const storedShips = JSON.parse(localStorage.getItem('wildjammerShips')) || {};
+  const newShip = new Ship(shipData);
+  storedShips[newShip.id] = newShip;
+  localStorage.setItem('wildjammerShips', JSON.stringify(storedShips));
+  loadShipList().then(updateDynamicClasses);
+};
+
+// Global function to handle ship editing (if needed)
+window.editShip = function(shipId, updatedData) {
+  const storedShips = JSON.parse(localStorage.getItem('wildjammerShips')) || {};
+  if (storedShips[shipId]) {
+    Object.assign(storedShips[shipId], updatedData);
+    localStorage.setItem('wildjammerShips', JSON.stringify(storedShips));
+    loadShipList().then(updateDynamicClasses);
   }
-}
+};
 
-// Example usage:
-// const loadingContainer = document.querySelector('.loading-container');
-// showLoading(loadingContainer);
-// // Perform some asynchronous operation
-// // Then hide the loading rune
-// hideLoading(loadingContainer);
+// Function to initialize the page (can be called from HTML if needed)
+window.initializePage = function() {
+  initializeTheme();
+  loadShipList().then(updateDynamicClasses);
+};
