@@ -5,33 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wildjammer Ship Management</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Space+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative&family=Space+Grotesk&family=Spectral&display=swap" rel="stylesheet">    
     <link rel="stylesheet" href="spelljammer-style.css">
     <script src="wildjammer-data.js"></script>
     <script src="ship-class.js"></script>
     <script src="theme-switcher.js" defer></script>
-    <style>
-        /* These styles are kept for specific layout purposes */
-        .container {
-            backdrop-filter: blur(10px);
-        }
-        .ship-card {
-            transition: all 0.3s ease;
-        }
-        .ship-card:hover {
-            transform: translateY(-5px);
-        }
-    </style>
 </head>
 <body class="light-mode bg-cover bg-fixed">
+    
     <div class="cosmic-dust"></div>
     <div class="container mx-auto px-4 py-8 min-h-screen">
         <div class="bg-opacity-80 p-6 rounded-lg shadow-lg">
             <div class="flex flex-col md:flex-row justify-between items-center mb-6">
-                <h1 class="text-4xl font-bold mb-4 md:mb-0">My Wildjammers</h1>
+                <h1 class="text-4xl font-bold mb-4 md:mb-0 nebula-text">My Wildjammers</h1>
                 <div class="flex flex-col sm:flex-row gap-2">
-                    <a href="wildjammer-create-ship.html" class="px-4 py-2 rounded hover transition duration-300">CREATE A WILDJAMMER</a>
-                    <button id="toggleDarkMode" class="px-4 py-2 rounded hover transition duration-300">Toggle Dark Mode</button>
+                    <a href="wildjammer-create-ship.html" class="px-4 py-2 rounded hover transition duration-300 magical-glow">CREATE A WILDJAMMER</a>
+                    <button id="toggleDarkMode" class="px-4 py-2 rounded hover transition duration-300 magical-glow">Toggle Dark Mode</button>
                 </div>
             </div>
             <div class="mb-6 flex flex-col md:flex-row gap-4">
@@ -70,7 +59,7 @@
                 shipList.innerHTML = '';
                 shipsToDisplay.forEach(ship => {
                     const shipCard = document.createElement('div');
-                    shipCard.className = 'ship-card rounded-lg overflow-hidden';
+                    shipCard.className = 'ship-card rounded-lg overflow-hidden nautical-border';
                     shipCard.innerHTML = `
                         <div class="p-4">
                             <h2 class="text-xl font-bold">${ship.name}</h2>
@@ -142,6 +131,30 @@
             // Make deleteShip function global so it can be called from inline onclick
             window.deleteShip = deleteShip;
         });
+        function createCosmicDust() {
+        const container = document.querySelector('.cosmic-dust');
+        for (let i = 0; i < 50; i++) {
+            const dust = document.createElement('div');
+            dust.className = 'dust-particle';
+            dust.style.left = `${Math.random() * 100}%`;
+            dust.style.top = `${Math.random() * 100}%`;
+            dust.style.width = `${Math.random() * 3 + 1}px`;
+            dust.style.height = dust.style.width;
+            container.appendChild(dust);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', createCosmicDust);
+        function addStars() {
+        const container = document.querySelector('.container');
+        for (let i = 0; i < 50; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = `${Math.random() * 100}%`;
+            star.style.top = `${Math.random() * 100}%`;
+            container.appendChild(star);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', addStars);
     </script>
 </body>
 </html>
