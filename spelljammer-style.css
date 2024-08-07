@@ -324,9 +324,33 @@ input[type="text"], input[type="number"], select, textarea {
 }
 
 /* Nautical-inspired decorative elements */
-.nautical-border {
-  border: 2px solid var(--golden);
-  border-image: url('path-to-rope-border-image.png') 30 round;
+.spelljammer-border {
+    border: 4px solid transparent;
+    border-radius: 12px;
+    background-clip: padding-box, border-box;
+    background-origin: padding-box, border-box;
+    background-image: 
+        linear-gradient(to right, rgba(10, 10, 42, 0.8), rgba(10, 10, 42, 0.8)),
+        linear-gradient(45deg, #4ecdc4, #ff61d2, #7e6bf5, #cab644);
+    position: relative;
+    overflow: hidden;
+}
+
+.spelljammer-border::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    right: -50%;
+    bottom: -50%;
+    background: 
+        radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px),
+        radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px),
+        radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 40px);
+    background-size: 550px 550px, 350px 350px, 250px 250px;
+    background-position: 0 0, 40px 60px, 130px 270px;
+    animation: stars 120s linear infinite;
+    opacity: 0.3;
 }
 
 /* Constellation animation */
