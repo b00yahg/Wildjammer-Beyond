@@ -62,6 +62,24 @@ body.dark-mode {
   background-image: linear-gradient(45deg, #0a0a2a, #3a0ca3, #5a189a, #7209b7);
 }
 
+.background-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  transition: background-color 0.3s;
+}
+
+.light-mode .background-overlay {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.dark-mode .background-overlay {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
 h1, h2, h3 {
   font-family: 'Cinzel Decorative', cursive;
 }
@@ -231,6 +249,8 @@ input[type="text"], input[type="number"], select, textarea {
   background-color: rgba(0, 0, 0, 0.5);
   color: var(--golden);
   border: 1px solid var(--golden);
+  padding: 5px;
+  border-radius: 5px;
 }
 
 /* Cosmic dust particles */
