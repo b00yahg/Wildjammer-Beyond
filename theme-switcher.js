@@ -32,43 +32,18 @@ function toggleDarkMode() {
   document.body.classList.toggle('dark-mode');
   document.body.classList.toggle('light-mode');
   localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
-
-  // Force a redraw of the ship cards
-  const shipCards = document.querySelectorAll('.ship-card');
-  shipCards.forEach(card => {
-    card.style.display = 'none';
-    card.offsetHeight; // Trigger a reflow
-    card.style.display = '';
-  });
-
-  // Update background image overlay
-  updateBackgroundOverlay();
 }
 
 // Function to change background image
 function changeBackgroundImage(index) {
   document.body.style.backgroundImage = `url('${backgroundImages[index]}')`;
   localStorage.setItem('backgroundImageIndex', index);
-
-  // Update background image overlay
-  updateBackgroundOverlay();
-}
-
-// Function to update background overlay based on current mode
-function updateBackgroundOverlay() {
-  const isDarkMode = document.body.classList.contains('dark-mode');
-  const overlay = document.querySelector('.background-overlay');
-  if (!overlay) {
-    const newOverlay = document.createElement('div');
-    newOverlay.className = 'background-overlay';
-    document.body.appendChild(newOverlay);
-  }
-  document.body.style.backgroundBlendMode = isDarkMode ? 'soft-light' : 'normal';
 }
 
 // Updated function to create and append background image selector
 function createBackgroundImageSelector() {
-  const select = document.getElementById('bgImageSelect');
+  const select = document.createElement('select');
+  select.id = 'bgImageSelect';
   
   backgroundImages.forEach((_, index) => {
     const option = document.createElement('option');
@@ -78,6 +53,7 @@ function createBackgroundImageSelector() {
   });
   
   select.addEventListener('change', (e) => changeBackgroundImage(e.target.value));
+  document.body.appendChild(select);
 }
 
 function createCosmicDust() {
@@ -94,17 +70,6 @@ function createCosmicDust() {
     particle.style.animationDuration = `${Math.random() * 10 + 10}s`;
     particle.style.animationDelay = `${Math.random() * 10}s`;
     dustContainer.appendChild(particle);
-  }
-}
-
-function addStars() {
-  const container = document.querySelector('.container');
-  for (let i = 0; i < 50; i++) {
-    const star = document.createElement('div');
-    star.className = 'star';
-    star.style.left = `${Math.random() * 100}%`;
-    star.style.top = `${Math.random() * 100}%`;
-    container.appendChild(star);
   }
 }
 
@@ -132,10 +97,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Create cosmic dust effect
   createCosmicDust();
-
-  // Add stars
-  addStars();
-
-  // Initial background overlay update
-  updateBackgroundOverlay();
 });

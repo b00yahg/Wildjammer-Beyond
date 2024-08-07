@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative&family=Space+Grotesk&family=Spectral&display=swap');
 
 :root {
-  /* Light mode colors */
+  /* Light mode colors inspired by Image 2 */
   --light-bg: #d2fdf3;
   --light-text: #333366;
   --light-accent1: #ff6b6b;
@@ -9,7 +9,7 @@
   --light-card-bg: #b3caeb;
   --light-card-border: #d6be34;
 
-  /* Dark mode colors */
+  /* Dark mode colors inspired by Image 1 */
   --dark-bg: #0a0a2a;
   --dark-text: #e0e0ff;
   --dark-accent1: #9d4edd;
@@ -32,43 +32,16 @@ body {
   background-position: center;
 }
 
-/* Starry background */
-body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: 
-    radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px),
-    radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px),
-    radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 40px);
-  background-size: 550px 550px, 350px 350px, 250px 250px;
-  background-position: 0 0, 40px 60px, 130px 270px;
-  z-index: -1;
-  opacity: 0.3;
-}
-
 body.light-mode {
-  background-color: transparent;
+  background-color: var(--light-bg);
   color: var(--light-text);
+  background-image: linear-gradient(45deg, #4ecdc4, #ff6b6b, #45b7d1, #f7b733);
 }
 
 body.dark-mode {
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: var(--dark-bg);
   color: var(--dark-text);
-}
-
-.background-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  transition: background-color 0.3s;
-  background-color: transparent;
+  background-image: linear-gradient(45deg, #0a0a2a, #3a0ca3, #5a189a, #7209b7);
 }
 
 h1, h2, h3 {
@@ -84,11 +57,11 @@ h1, h2, h3 {
 }
 
 .light-mode .container {
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.7);
 }
 
 .dark-mode .container {
-  background-color: rgba(10, 10, 42, 0.3);
+  background-color: rgba(10, 10, 42, 0.7);
 }
 
 .ship-card, .module-card, .weapon-card, .upgrade-card {
@@ -98,24 +71,14 @@ h1, h2, h3 {
   box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
 }
 
-body.light-mode .ship-card.spelljammer-border {
-  background-color: rgba(255, 255, 255, 0.7);
-  color: var(--light-text);
+.light-mode .ship-card, .light-mode .module-card, .light-mode .weapon-card, .light-mode .upgrade-card {
+  background-color: var(--light-card-bg);
+  border: 1px solid var(--light-card-border);
 }
 
-body.dark-mode .ship-card.spelljammer-border {
-  background-color: rgba(10, 10, 42, 0.7);
-  color: var(--dark-text);
-}
-
-body.light-mode .ship-card.spelljammer-border h2,
-body.light-mode .ship-card.spelljammer-border p {
-  color: var(--light-text);
-}
-
-body.dark-mode .ship-card.spelljammer-border h2,
-body.dark-mode .ship-card.spelljammer-border p {
-  color: var(--dark-text);
+.dark-mode .ship-card, .dark-mode .module-card, .dark-mode .weapon-card, .dark-mode .upgrade-card {
+  background-color: var(--dark-card-bg);
+  border: 1px solid var(--dark-card-border);
 }
 
 .ship-card:hover, .module-card:hover, .weapon-card:hover, .upgrade-card:hover {
@@ -123,7 +86,7 @@ body.dark-mode .ship-card.spelljammer-border p {
   box-shadow: 0 10px 20px rgba(255, 215, 0, 0.4);
 }
 
-button, a[href].px-4 {
+button {
   font-family: 'Space Grotesk', sans-serif;
   border: none;
   border-radius: 5px;
@@ -133,29 +96,29 @@ button, a[href].px-4 {
   text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
 }
 
-button:hover, a[href].px-4:hover {
+button:hover {
   transform: translateY(-2px);
 }
 
-button:active, a[href].px-4:active {
+button:active {
   transform: translateY(1px);
 }
 
-.light-mode button, .light-mode a[href].px-4 {
+.light-mode button {
   background-color: var(--light-accent1);
   color: white;
 }
 
-.light-mode button:hover, .light-mode a[href].px-4:hover {
+.light-mode button:hover {
   background-color: var(--light-accent2);
 }
 
-.dark-mode button, .dark-mode a[href].px-4 {
+.dark-mode button {
   background-color: var(--dark-accent1);
   color: white;
 }
 
-.dark-mode button:hover, .dark-mode a[href].px-4:hover {
+.dark-mode button:hover {
   background-color: var(--dark-accent2);
 }
 
@@ -163,9 +126,8 @@ input[type="text"], input[type="number"], select, textarea {
   font-family: 'Space Grotesk', sans-serif;
   border-radius: 5px;
   padding: 8px;
-  border: 2px solid var(--golden);
+  border: 1px solid var(--golden);
   transition: border-color 0.3s, box-shadow 0.3s;
-  box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
 }
 
 .light-mode input[type="text"], .light-mode input[type="number"], .light-mode select, .light-mode textarea {
@@ -242,8 +204,6 @@ input[type="text"], input[type="number"], select, textarea {
   background-color: rgba(0, 0, 0, 0.5);
   color: var(--golden);
   border: 1px solid var(--golden);
-  padding: 5px;
-  border-radius: 5px;
 }
 
 /* Cosmic dust particles */
@@ -330,69 +290,4 @@ input[type="text"], input[type="number"], select, textarea {
 
 .dark-mode .popup button {
   background-color: var(--dark-accent2);
-}
-
-/* Magical glow effect for buttons and important elements */
-.magical-glow {
-  box-shadow: 0 0 10px var(--nebula1), 0 0 20px var(--nebula2);
-  transition: box-shadow 0.3s ease;
-  position: relative;
-  z-index: 1;
-}
-
-.magical-glow:hover {
-  box-shadow: 0 0 15px var(--nebula1), 0 0 30px var(--nebula2);
-}
-
-/* Spelljammer border */
-.spelljammer-border {
-  border: 4px solid transparent;
-  border-radius: 12px;
-  background-clip: padding-box, border-box;
-  background-origin: padding-box, border-box;
-  position: relative;
-  overflow: hidden;
-}
-
-.light-mode .spelljammer-border {
-  background-image: 
-      linear-gradient(to right, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)),
-      linear-gradient(45deg, #4ecdc4, #ff61d2, #7e6bf5, #cab644);
-}
-
-.dark-mode .spelljammer-border {
-  background-image: 
-      linear-gradient(to right, rgba(10, 10, 42, 0.8), rgba(10, 10, 42, 0.8)),
-      linear-gradient(45deg, #4ecdc4, #ff61d2, #7e6bf5, #cab644);
-}
-
-.spelljammer-border::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  right: -50%;
-  bottom: -50%;
-  background: 
-      radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px),
-      radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px),
-      radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 40px);
-  background-size: 550px 550px, 350px 350px, 250px 250px;
-  background-position: 0 0, 40px 60px, 130px 270px;
-  animation: stars 120s linear infinite;
-  opacity: 0.3;
-}
-
-@keyframes stars {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Constellation animation */
-.star {
-  width: 2px;
-  height: 2px;
-  background-color: white;
-  position: absolute;
-  animation: twinkle 3s infinite;
 }
