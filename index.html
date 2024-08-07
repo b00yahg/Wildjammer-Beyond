@@ -67,11 +67,13 @@
                 shipList.innerHTML = '';
                 shipsToDisplay.forEach(ship => {
                     const shipCard = document.createElement('div');
-                    shipCard.className = 'ship-card rounded-lg overflow-hidden';
+                    shipCard.className = 'ship-card';
                     shipCard.innerHTML = `
-                        <div class="ship-card-content">
+                        <div class="ship-card-header">
                             <h2 class="ship-name astral-text">${ship.name}</h2>
                             <p class="ship-type">${ship.hullType} | ${wildjammerData.hulls[ship.hullType].type}</p>
+                        </div>
+                        <div class="ship-card-content">
                             <p class="ship-captain">Captain: ${ship.captain}</p>
                             <div class="ship-actions">
                                 <a href="wildjammer-view-ship.html?id=${ship.id}" class="magical-glow">VIEW</a>
