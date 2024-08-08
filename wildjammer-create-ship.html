@@ -4,12 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create/Edit Wildjammer Ship</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="wildjammer-data.js"></script>
-    <script src="ship-class.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Space+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="spelljammer-style.css">
-    <script src="theme-switcher.js" defer></script>
 </head>
 <body class="light-mode">
     <div class="cosmic-dust"></div>
@@ -84,37 +80,39 @@
         </div>
 
         <div class="mt-6">
-            <button onclick="createShip()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300">Create Ship</button>
+            <button id="createShipButton" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300">Create Ship</button>
         </div>
     </div>
 
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="wildjammer-data.js"></script>
+    <script src="ship-class.js"></script>
+    <script src="theme-switcher.js"></script>
     <script>
-        // Check if localStorage is supported
-        if (typeof(Storage) === "undefined") {
-            console.error("localStorage is not supported");
-        }
+        document.addEventListener('DOMContentLoaded', function() {
+            // Populate hull type options
+            const hullTypeSelect = document.getElementById('hullType');
+            for (const [key, value] of Object.entries(wildjammerData.hulls)) {
+                const option = document.createElement('option');
+                option.value = key;
+                option.textContent = value.name;
+                hullTypeSelect.appendChild(option);
+            }
 
-        // Populate hull type options
-        const hullTypeSelect = document.getElementById('hullType');
-        for (const [key, value] of Object.entries(wildjammerData.hulls)) {
-            const option = document.createElement('option');
-            option.value = key;
-            option.textContent = value.name;
-            hullTypeSelect.appendChild(option);
-        }
+            // Populate helm type options
+            const helmTypeSelect = document.getElementById('helmType');
+            for (const [key, value] of Object.entries(wildjammerData.helms)) {
+                const option = document.createElement('option');
+                option.value = key;
+                option.textContent = value.name;
+                helmTypeSelect.appendChild(option);
+            }
 
-        // Populate helm type options
-        const helmTypeSelect = document.getElementById('helmType');
-        for (const [key, value] of Object.entries(wildjammerData.helms)) {
-            const option = document.createElement('option');
-            option.value = key;
-            option.textContent = value.name;
-            helmTypeSelect.appendChild(option);
-        }
+            document.getElementById('createShipButton').addEventListener('click', createShip);
+        });
 
         function createShip() {
             console.log("Create Ship function called");
-
             const shipName = document.getElementById('shipName').value;
             const hullType = document.getElementById('hullType').value;
             const helmType = document.getElementById('helmType').value;
@@ -155,9 +153,7 @@
             localStorage.setItem('wildjammerShips', JSON.stringify(ships));
 
             console.log("Redirecting to:", `wildjammer-view-ship.html?id=${newShip.id}`);
-
-            // Redirect to the view-ship page
-            window.location.assign(`wildjammer-view-ship.html?id=${newShip.id}`);
+            window.location.href = `wildjammer-view-ship.html?id=${newShip.id}`;
         }
     </script>
 </body>
