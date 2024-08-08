@@ -126,13 +126,21 @@
                             <tr>
                                 <th>Type of Crew</th>
                                 <th>#</th>
-                                <th>Rate</th>
-                                <th>Per Month</th>
+                                <th>Rate (Day/Month)</th>
+                                <th>Total per Day</th>
+                                <th>Total per Month</th>
                             </tr>
                         </thead>
                         <tbody id="crewComplementTable">
                             <!-- Crew complement rows will be added here dynamically -->
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" class="text-right font-bold">Total:</td>
+                                <td id="totalPerDay" class="font-bold"></td>
+                                <td id="totalPerMonth" class="font-bold"></td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
                 <div>
@@ -673,7 +681,78 @@
                         alert('Invalid upgrade selection');
                     }
                 }
-
+        const crewTypes = [
+            { name: "Green Crew", costPerDay: 1.5, costPerMonth: 45 },
+            { name: "Veteran Crew", costPerDay: 3, costPerMonth: 90 },
+            { name: "Mercenaries", costPerDay: 5, costPerMonth: 150 },
+            { name: "Giff Mercenaries", costPerDay: 6.5, costPerMonth: 195 },
+            { name: "Hurwaeti Mercenaries", costPerDay: 8, costPerMonth: 240 }
+        ];
+        
+        function initializeCrewComplement() {
+            const table = document.getElementById('crewComplementTable');
+            table.innerHTML = '';
+        
+            crewTypes.forEach((crew, index) => {
+                const row = table.insertRow();
+                row.innerHTML = `
+                    <td>${crew.name}</td>
+                    <td><input type="number" min="0" value="0" class="crew-count w-16 text-center" data-index="${index}"></td>
+                    <td>${crew.costPerDay}gp / ${crew.costPerMonth}gp</td>
+                    <td class="crew-total-day"></td>
+                    <td class="crew-total-month"></td>
+                `;
+            });
+        
+            document.querySelectorAll('.crew-count').forEach(input => {
+                input.addEventListener('input', updateCrewCosts);
+            });
+        
+            updateCrewCosts();
+        }
+        
+        function updateCrewCosts() {
+            let totalPerDay = 0;
+            let totalPerMonth = 0;
+        
+            document.querySelectorAll('.crew-count').forEach((input, index) => {
+                const count = parseInt(input.value) || 0;
+                const crew = crewTypes[index];
+                const totalDay = count * crew.costPerDay;
+                const totalMonth = count * crew.costPerMonth;
+        
+                totalPerDay += totalDay;
+                totalPerMonth += totalMonth;
+        
+                const row = input.closest('tr');
+                row.querySelector('.crew-total-day').textContent = totalDay.toFixed(2) + 'gp';
+                row.querySelector('.crew-total-month').textContent = totalMonth.toFixed(2) + 'gp';
+            });
+        
+            document.getElementById('totalPerDay').textContent = totalPerDay.toFixed(2) + 'gp';
+            document.getElementById('totalPerMonth').textContent = totalPerMonth.toFixed(2) + 'gp';
+        
+            saveShipChanges();
+        }
+        
+        function saveCrewComplement() {
+            const crewComplement = {};
+            document.querySelectorAll('.crew-count').forEach((input, index) => {
+                const count = parseInt(input.value) || 0;
+                crewComplement[crewTypes[index].name] = count;
+            });
+            return crewComplement;
+        }
+        
+        function loadCrewComplement(savedCrewComplement) {
+            if (savedCrewComplement) {
+                document.querySelectorAll('.crew-count').forEach((input, index) => {
+                    const crewName = crewTypes[index].name;
+                    input.value = savedCrewComplement[crewName] || 0;
+                });
+                updateCrewCosts();
+            }
+        }
         </script>
     <div id="moduleDropdown" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-800 p-4 rounded shadow-lg">
         <select id="moduleSelect" class="w-full p-2 bg-gray-700 text-white rounded">
