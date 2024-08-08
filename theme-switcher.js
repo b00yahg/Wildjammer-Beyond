@@ -1,3 +1,5 @@
+// theme-switcher.js
+
 // Array of background image URLs
 const backgroundImages = [
   'https://images.ctfassets.net/swt2dsco9mfe/1Q99ur33fjWePT9vfm9RBP/39269626dd25b4ecda2bee48594041a2/2560x1600-jam-3.jpg',
@@ -28,20 +30,20 @@ const backgroundNames = [
 
 let ships = [];
 
+document.addEventListener('DOMContentLoaded', () => {
+  initializeTheme();
+  createBackgroundImageSelector();
+  loadSavedBackground();
+  setupEventListeners();
+  createCosmicDust();
+  loadShipList().then(updateDynamicClasses);
+});
+
 // Function to initialize theme
 function initializeTheme() {
   const storedDarkMode = localStorage.getItem('darkMode');
-  let darkMode;
+  let darkMode = storedDarkMode === null ? false : storedDarkMode === 'true';
   
-  if (storedDarkMode === null) {
-    // If no preference is stored, default to light mode
-    darkMode = false;
-    localStorage.setItem('darkMode', 'false');
-  } else {
-    // Use the stored preference
-    darkMode = storedDarkMode === 'true';
-  }
-
   document.body.classList.toggle('dark-mode', darkMode);
   document.body.classList.toggle('light-mode', !darkMode);
   updateDynamicClasses();
@@ -77,8 +79,41 @@ function createBackgroundImageSelector() {
   document.body.appendChild(select);
 }
 
+// Function to load saved background
+function loadSavedBackground() {
+  const savedBgIndex = localStorage.getItem('backgroundImageIndex');
+  if (savedBgIndex !== null) {
+    changeBackgroundImage(parseInt(savedBgIndex));
+    const bgSelect = document.getElementById('bgImageSelect');
+    if (bgSelect) {
+      bgSelect.value = savedBgIndex;
+    }
+  }
+}
+
+// Function to set up event listeners
+function setupEventListeners() {
+  const themeToggle = document.getElementById('toggleDarkMode');
+  if (themeToggle) {
+    themeToggle.addEventListener('click', toggleDarkMode);
+  }
+
+  const searchInput = document.getElementById('searchInput');
+  if (searchInput) {
+    searchInput.addEventListener('input', filterShips);
+  }
+
+  const sortSelect = document.getElementById('sortSelect');
+  if (sortSelect) {
+    sortSelect.addEventListener('change', sortShips);
+  }
+}
+// ... (continued from the previous part)
+
 function createCosmicDust() {
   const dustContainer = document.querySelector('.cosmic-dust');
+  if (!dustContainer) return;
+
   const particleCount = 50;
 
   for (let i = 0; i < particleCount; i++) {
@@ -178,12 +213,17 @@ function updateDynamicClasses() {
 // Function to load and display the list of ships
 function loadShipList() {
   return new Promise((resolve) => {
-    showLoading(document.getElementById('loadingIndicator'));
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    if (loadingIndicator) {
+      showLoading(loadingIndicator);
+    }
     setTimeout(() => {  // Simulating network delay
       const storedShips = JSON.parse(localStorage.getItem('wildjammerShips')) || {};
       ships = Object.values(storedShips).map(shipData => new Ship(shipData));
       displayShips(ships);
-      hideLoading(document.getElementById('loadingIndicator'));
+      if (loadingIndicator) {
+        hideLoading(loadingIndicator);
+      }
       resolve();
     }, 1000);
   });
@@ -191,6 +231,8 @@ function loadShipList() {
 
 function displayShips(shipsToDisplay) {
   const shipList = document.getElementById('shipList');
+  if (!shipList) return;
+
   shipList.innerHTML = '';
   shipsToDisplay.forEach(ship => {
     const shipCard = document.createElement('div');
@@ -213,9 +255,12 @@ function displayShips(shipsToDisplay) {
   });
   updateDynamicClasses();
 }
+// ... (continued from the previous parts)
 
 function filterShips() {
   const searchInput = document.getElementById('searchInput');
+  if (!searchInput) return;
+
   const searchTerm = searchInput.value.toLowerCase();
   const filteredShips = ships.filter(ship => 
     ship.name.toLowerCase().includes(searchTerm) ||
@@ -227,6 +272,8 @@ function filterShips() {
 
 function sortShips() {
   const sortSelect = document.getElementById('sortSelect');
+  if (!sortSelect) return;
+
   const sortValue = sortSelect.value;
   const sortedShips = [...ships].sort((a, b) => {
     switch (sortValue) {
@@ -272,40 +319,6 @@ function hideLoading(container) {
   container.style.display = 'none';
 }
 
-// Initialize theme and background
-document.addEventListener('DOMContentLoaded', () => {
-  initializeTheme();
-
-  createBackgroundImageSelector();
-
-  const savedBgIndex = localStorage.getItem('backgroundImageIndex');
-  if (savedBgIndex !== null) {
-    changeBackgroundImage(parseInt(savedBgIndex));
-    document.getElementById('bgImageSelect').value = savedBgIndex;
-  }
-
-  const themeToggle = document.getElementById('toggleDarkMode');
-  if (themeToggle) {
-    themeToggle.addEventListener('click', toggleDarkMode);
-  }
-
-  createCosmicDust();
-
-  loadShipList().then(() => {
-    updateDynamicClasses();
-  });
-
-  const searchInput = document.getElementById('searchInput');
-  if (searchInput) {
-    searchInput.addEventListener('input', filterShips);
-  }
-
-  const sortSelect = document.getElementById('sortSelect');
-  if (sortSelect) {
-    sortSelect.addEventListener('change', sortShips);
-  }
-});
-
 // Event listeners for dynamic class application
 document.addEventListener('click', (e) => {
   if (e.target.matches('button')) {
@@ -313,14 +326,16 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// Make deleteShip function global so it can be called from inline onclick
+// Make functions global so they can be called from inline onclick or other scripts
 window.deleteShip = deleteShip;
+window.toggleDarkMode = toggleDarkMode;
+window.updateDynamicClasses = updateDynamicClasses;
 
 // Global function to handle ship creation (if needed)
 window.createShip = function(shipData) {
   const storedShips = JSON.parse(localStorage.getItem('wildjammerShips')) || {};
   const newShip = new Ship(shipData);
-  storedShips[newShip.id] = newShip;
+  storedShips[newShip.id] = newShip.toJSON();
   localStorage.setItem('wildjammerShips', JSON.stringify(storedShips));
   loadShipList().then(updateDynamicClasses);
 };
@@ -340,3 +355,22 @@ window.initializePage = function() {
   initializeTheme();
   loadShipList().then(updateDynamicClasses);
 };
+
+// Export functions for module usage if needed
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    initializeTheme,
+    toggleDarkMode,
+    changeBackgroundImage,
+    createBackgroundImageSelector,
+    createCosmicDust,
+    updateDynamicClasses,
+    loadShipList,
+    filterShips,
+    sortShips,
+    deleteShip,
+    createShip,
+    editShip,
+    initializePage
+  };
+}
