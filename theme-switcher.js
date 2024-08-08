@@ -29,12 +29,7 @@ const backgroundNames = [
 let ships = [];
 
 document.addEventListener('DOMContentLoaded', () => {
-  initializeTheme();
-  createBackgroundImageSelector();
-  loadSavedBackground();
-  setupEventListeners();
-  createCosmicDust();
-  loadShipList().then(updateDynamicClasses);
+  initializePage();
 });
 
 // Function to initialize theme
@@ -205,6 +200,7 @@ function updateDynamicClasses() {
   
   // Create loading runes where needed (example)
   document.querySelectorAll('.loading-container').forEach(createLoadingRune);
+}
 
 // Function to load and display the list of ships
 function loadShipList() {
@@ -379,6 +375,10 @@ window.editShip = function(shipId, updatedData) {
 // Function to initialize the page (can be called from HTML if needed)
 window.initializePage = function() {
   initializeTheme();
+  createBackgroundImageSelector();
+  loadSavedBackground();
+  setupEventListeners();
+  createCosmicDust();
   loadShipList().then(updateDynamicClasses);
 };
 
