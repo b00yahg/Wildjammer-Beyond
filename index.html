@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wildjammer Ship Management</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative&family=Space+Grotesk&family=Spectral&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="spelljammer-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative&family=Space+Grotesk&family=Spectral&display=swap" rel="stylesheet">    <link rel="stylesheet" href="spelljammer-style.css">
     <script src="wildjammer-data.js"></script>
     <script src="ship-class.js"></script>
     <script src="theme-switcher.js" defer></script>
     <style>
+        /* These styles are kept for specific layout purposes */
         .container {
             backdrop-filter: blur(10px);
         }
@@ -24,27 +24,27 @@
 <body class="light-mode">
     <div class="cosmic-dust"></div>
     <div class="container">
-        <div class="header-container">
-            <h1 class="astral-text">My Wildjammers</h1>
-            <div class="button-container">
-                <a href="wildjammer-create-ship.html" class="magical-glow">CREATE A WILDJAMMER</a>
-                <button id="toggleDarkMode" class="magical-glow">Toggle Dark Mode</button>
+            <div class="header-container">
+                <h1 class="astral-text">My Wildjammers</h1>
+                <div class="button-container">
+                    <a href="wildjammer-create-ship.html" class="magical-glow">CREATE A WILDJAMMER</a>
+                    <button id="toggleDarkMode" class="magical-glow">Toggle Dark Mode</button>
+                </div>
+            </div>
+            <div class="search-sort-container">
+                <input type="text" id="searchInput" placeholder="Search by Name, Model, or Size" class="steampunk-input">
+                <select id="sortSelect" class="steampunk-input">
+                    <option value="nameAsc">Name: A-Z</option>
+                    <option value="nameDesc">Name: Z-A</option>
+                    <option value="sizeAsc">Size: Smallest to Largest</option>
+                    <option value="sizeDesc">Size: Largest to Smallest</option>
+                </select>
+            </div>
+            <div id="shipList" class="ship-list constellation-bg">
+                <!-- Ship cards will be inserted here -->
             </div>
         </div>
-        <div class="search-sort-container">
-            <input type="text" id="searchInput" placeholder="Search by Name, Model, or Size" class="steampunk-input">
-            <select id="sortSelect" class="steampunk-input">
-                <option value="nameAsc">Name: A-Z</option>
-                <option value="nameDesc">Name: Z-A</option>
-                <option value="sizeAsc">Size: Smallest to Largest</option>
-                <option value="sizeDesc">Size: Largest to Smallest</option>
-            </select>
-        </div>
-        <div id="shipList" class="ship-list constellation-bg">
-            <!-- Ship cards will be inserted here -->
-        </div>
     </div>
-    <div id="loadingIndicator" class="loading-container" style="display: none;"></div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const shipList = document.getElementById('shipList');
@@ -52,47 +52,26 @@
             const sortSelect = document.getElementById('sortSelect');
             let ships = [];
 
-            function showLoading() {
-                const loadingIndicator = document.getElementById('loadingIndicator');
-                if (loadingIndicator) {
-                    loadingIndicator.style.display = 'block';
-                    createLoadingRune(loadingIndicator);
-                }
-            }
-
-            function hideLoading() {
-                const loadingIndicator = document.getElementById('loadingIndicator');
-                if (loadingIndicator) {
-                    loadingIndicator.style.display = 'none';
-                    loadingIndicator.innerHTML = '';
-                }
-            }
-
+            // Function to load and display the list of ships
             function loadShipList() {
-                showLoading();
-                setTimeout(() => {
+                showLoading(document.getElementById('loadingIndicator'));
+                setTimeout(() => {  // Simulating network delay
                     const storedShips = JSON.parse(localStorage.getItem('wildjammerShips')) || {};
                     ships = Object.values(storedShips).map(shipData => new Ship(shipData));
                     displayShips(ships);
-                    hideLoading();
+                    hideLoading(document.getElementById('loadingIndicator'));
                 }, 1000);
             }
 
             function displayShips(shipsToDisplay) {
                 shipList.innerHTML = '';
-                if (shipsToDisplay.length === 0) {
-                    shipList.innerHTML = '<p>No ships found. Create a new Wildjammer to get started!</p>';
-                    return;
-                }
                 shipsToDisplay.forEach(ship => {
                     const shipCard = document.createElement('div');
-                    shipCard.className = 'ship-card';
+                    shipCard.className = 'ship-card rounded-lg overflow-hidden';
                     shipCard.innerHTML = `
-                        <div class="ship-card-header">
+                        <div class="ship-card-content">
                             <h2 class="ship-name astral-text">${ship.name}</h2>
                             <p class="ship-type">${ship.hullType} | ${wildjammerData.hulls[ship.hullType].type}</p>
-                        </div>
-                        <div class="ship-card-content">
                             <p class="ship-captain">Captain: ${ship.captain}</p>
                             <div class="ship-actions">
                                 <a href="wildjammer-view-ship.html?id=${ship.id}" class="magical-glow">VIEW</a>
@@ -103,7 +82,6 @@
                     `;
                     shipList.appendChild(shipCard);
                 });
-                updateDynamicClasses();
             }
 
             function filterShips() {
@@ -140,7 +118,7 @@
                 return sizeOrder.indexOf(wildjammerData.hulls[hullType].type);
             }
 
-            window.deleteShip = function(shipId) {
+            function deleteShip(shipId) {
                 if (confirm('Are you sure you want to delete this ship?')) {
                     const storedShips = JSON.parse(localStorage.getItem('wildjammerShips')) || {};
                     delete storedShips[shipId];
@@ -149,11 +127,17 @@
                 }
             }
 
+            // Event listeners
             searchInput.addEventListener('input', filterShips);
             sortSelect.addEventListener('change', sortShips);
 
+            // Initial load
             loadShipList();
+
+            // Make deleteShip function global so it can be called from inline onclick
+            window.deleteShip = deleteShip;
         });
     </script>
+<div id="loadingIndicator" class="loading-container" style="display: none;"></div>
 </body>
 </html>
