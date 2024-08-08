@@ -1,5 +1,3 @@
-// theme-switcher.js
-
 // Array of background image URLs
 const backgroundImages = [
   'https://images.ctfassets.net/swt2dsco9mfe/1Q99ur33fjWePT9vfm9RBP/39269626dd25b4ecda2bee48594041a2/2560x1600-jam-3.jpg',
@@ -108,7 +106,6 @@ function setupEventListeners() {
     sortSelect.addEventListener('change', sortShips);
   }
 }
-// ... (continued from the previous part)
 
 function createCosmicDust() {
   const dustContainer = document.querySelector('.cosmic-dust');
@@ -208,7 +205,6 @@ function updateDynamicClasses() {
   
   // Create loading runes where needed (example)
   document.querySelectorAll('.loading-container').forEach(createLoadingRune);
-}
 
 // Function to load and display the list of ships
 function loadShipList() {
@@ -218,13 +214,26 @@ function loadShipList() {
       showLoading(loadingIndicator);
     }
     setTimeout(() => {  // Simulating network delay
-      const storedShips = JSON.parse(localStorage.getItem('wildjammerShips')) || {};
-      ships = Object.values(storedShips).map(shipData => new Ship(shipData));
-      displayShips(ships);
-      if (loadingIndicator) {
-        hideLoading(loadingIndicator);
+      try {
+        const storedShips = JSON.parse(localStorage.getItem('wildjammerShips')) || {};
+        ships = Object.values(storedShips).map(shipData => {
+          try {
+            return new Ship(shipData);
+          } catch (error) {
+            console.error('Error creating Ship object:', error);
+            return null;
+          }
+        }).filter(ship => ship !== null);
+        displayShips(ships);
+      } catch (error) {
+        console.error('Error loading ships:', error);
+        displayError('An error occurred while loading the ships. Please try again.');
+      } finally {
+        if (loadingIndicator) {
+          hideLoading(loadingIndicator);
+        }
+        resolve();
       }
-      resolve();
     }, 1000);
   });
 }
@@ -234,13 +243,18 @@ function displayShips(shipsToDisplay) {
   if (!shipList) return;
 
   shipList.innerHTML = '';
+  if (shipsToDisplay.length === 0) {
+    shipList.innerHTML = '<p>No ships found. Create a new Wildjammer to get started!</p>';
+    return;
+  }
+
   shipsToDisplay.forEach(ship => {
     const shipCard = document.createElement('div');
     shipCard.className = 'ship-card';
     shipCard.innerHTML = `
       <div class="ship-card-header">
         <h2 class="ship-name astral-text">${ship.name}</h2>
-        <p class="ship-type">${ship.hullType} | ${wildjammerData.hulls[ship.hullType].type}</p>
+        <p class="ship-type">${ship.hullType} | ${getShipType(ship.hullType)}</p>
       </div>
       <div class="ship-card-content">
         <p class="ship-captain">Captain: ${ship.captain}</p>
@@ -255,7 +269,19 @@ function displayShips(shipsToDisplay) {
   });
   updateDynamicClasses();
 }
-// ... (continued from the previous parts)
+
+function getShipType(hullType) {
+  return wildjammerData && wildjammerData.hulls && wildjammerData.hulls[hullType]
+    ? wildjammerData.hulls[hullType].type
+    : 'Unknown';
+}
+
+function displayError(message) {
+  const shipList = document.getElementById('shipList');
+  if (shipList) {
+    shipList.innerHTML = `<p class="error-message">${message}</p>`;
+  }
+}
 
 function filterShips() {
   const searchInput = document.getElementById('searchInput');
@@ -265,7 +291,7 @@ function filterShips() {
   const filteredShips = ships.filter(ship => 
     ship.name.toLowerCase().includes(searchTerm) ||
     ship.hullType.toLowerCase().includes(searchTerm) ||
-    wildjammerData.hulls[ship.hullType].type.toLowerCase().includes(searchTerm)
+    getShipType(ship.hullType).toLowerCase().includes(searchTerm)
   );
   displayShips(filteredShips);
 }
@@ -294,7 +320,7 @@ function sortShips() {
 
 function getSizeOrder(hullType) {
   const sizeOrder = ['Fighter', 'Schooner', 'Sloop', 'Frigate', 'Heavy Frigate', 'Ship of the Line'];
-  return sizeOrder.indexOf(wildjammerData.hulls[hullType].type);
+  return sizeOrder.indexOf(getShipType(hullType));
 }
 
 function deleteShip(shipId) {
