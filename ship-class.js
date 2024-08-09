@@ -19,6 +19,8 @@ class Ship {
         this.weapons = data.weapons || [];
         this.modules = data.modules || [];
         this.upgrades = data.upgrades || [];
+        this.weaponModifiers = data.weaponModifiers || {};
+        this.moduleUses = data.moduleUses || {};
         this.cargo = data.cargo || { copper: 0, silver: 0, gold: 0, platinum: 0, items: '' };
         this.crewComplement = data.crewComplement || [];
         
