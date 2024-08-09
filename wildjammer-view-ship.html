@@ -124,15 +124,51 @@
                     <table class="w-full">
                         <thead>
                             <tr>
-                                <th>Type of Crew</th>
-                                <th>#</th>
-                                <th>Rate</th>
-                                <th>Per Month</th>
+                                <th>Crew Type</th>
+                                <th>Number</th>
+                                <th>Rate (Day)</th>
+                                <th>Rate (Month)</th>
                             </tr>
                         </thead>
                         <tbody id="crewComplementTable">
-                            <!-- Crew complement rows will be added here dynamically -->
+                            <tr>
+                                <td>Green Crew</td>
+                                <td><input type="number" class="crew-number" data-crew-type="green" min="0" value="0"></td>
+                                <td class="crew-rate-day">0 gp</td>
+                                <td class="crew-rate-month">0 gp</td>
+                            </tr>
+                            <tr>
+                                <td>Veteran Crew</td>
+                                <td><input type="number" class="crew-number" data-crew-type="veteran" min="0" value="0"></td>
+                                <td class="crew-rate-day">0 gp</td>
+                                <td class="crew-rate-month">0 gp</td>
+                            </tr>
+                            <tr>
+                                <td>Mercenaries</td>
+                                <td><input type="number" class="crew-number" data-crew-type="mercenary" min="0" value="0"></td>
+                                <td class="crew-rate-day">0 gp</td>
+                                <td class="crew-rate-month">0 gp</td>
+                            </tr>
+                            <tr>
+                                <td>Giff Mercenaries</td>
+                                <td><input type="number" class="crew-number" data-crew-type="giff" min="0" value="0"></td>
+                                <td class="crew-rate-day">0 gp</td>
+                                <td class="crew-rate-month">0 gp</td>
+                            </tr>
+                            <tr>
+                                <td>Hurwaeti Mercenaries</td>
+                                <td><input type="number" class="crew-number" data-crew-type="hurwaeti" min="0" value="0"></td>
+                                <td class="crew-rate-day">0 gp</td>
+                                <td class="crew-rate-month">0 gp</td>
+                            </tr>
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="2"><strong>Total</strong></td>
+                                <td id="totalDayRate">0 gp</td>
+                                <td id="totalMonthRate">0 gp</td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
                 <div>
@@ -208,6 +244,62 @@
 
     <div id="overlay" class="overlay"></div>
         <script>
+        const crewRates = {
+            green: { day: 1.5, month: 45 },
+            veteran: { day: 3, month: 90 },
+            mercenary: { day: 5, month: 150 },
+            giff: { day: 6.5, month: 195 },
+            hurwaeti: { day: 8, month: 240 }
+        };
+    
+        function updateCrewRates() {
+            let totalDayRate = 0;
+            let totalMonthRate = 0;
+    
+            document.querySelectorAll('.crew-number').forEach(input => {
+                const crewType = input.dataset.crewType;
+                const number = parseInt(input.value) || 0;
+                const dayRate = number * crewRates[crewType].day;
+                const monthRate = number * crewRates[crewType].month;
+    
+                input.closest('tr').querySelector('.crew-rate-day').textContent = dayRate.toFixed(2) + ' gp';
+                input.closest('tr').querySelector('.crew-rate-month').textContent = monthRate.toFixed(2) + ' gp';
+    
+                totalDayRate += dayRate;
+                totalMonthRate += monthRate;
+            });
+    
+            document.getElementById('totalDayRate').textContent = totalDayRate.toFixed(2) + ' gp';
+            document.getElementById('totalMonthRate').textContent = totalMonthRate.toFixed(2) + ' gp';
+    
+            // Update the ship object and save changes
+            currentShip.crewComplement = Array.from(document.querySelectorAll('.crew-number')).map(input => ({
+                type: input.dataset.crewType,
+                number: parseInt(input.value) || 0
+            }));
+            saveShipChanges();
+        }
+    
+        document.querySelectorAll('.crew-number').forEach(input => {
+            input.addEventListener('input', updateCrewRates);
+        });
+    
+        // Function to load saved crew complement data
+        function loadCrewComplement() {
+            if (currentShip.crewComplement) {
+                currentShip.crewComplement.forEach(crew => {
+                    const input = document.querySelector(`.crew-number[data-crew-type="${crew.type}"]`);
+                    if (input) {
+                        input.value = crew.number;
+                    }
+                });
+                updateCrewRates();
+            }
+        }
+    
+        // Call this function after loading the ship data
+        loadCrewComplement();
+
         let currentShip;
         let editMode = false;
     
@@ -262,6 +354,7 @@
                     return;
                 }
                 updateShipDisplay();
+                loadCrewComplement();
             }
         
             function updateShipDisplay() {
@@ -570,6 +663,12 @@
                     gold: parseInt(document.getElementById('goldInput').value) || 0,
                     platinum: parseInt(document.getElementById('platinumInput').value) || 0,
                     items: document.getElementById('cargoItems').value
+
+                 // Save updated ship to localStorage
+                const ships = JSON.parse(localStorage.getItem('wildjammerShips')) || {};
+                ships[currentShip.id] = currentShip.toJSON();
+                localStorage.setItem('wildjammerShips', JSON.stringify(ships));
+                console.log('Ship changes saved');
                 };
             
                 // Save weapon modifiers and HP
