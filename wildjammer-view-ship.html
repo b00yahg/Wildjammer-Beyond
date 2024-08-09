@@ -35,20 +35,6 @@
             background-color: rgba(0, 0, 0, 0.5);
             z-index: 999;
         }
-        #crewComplementTable input {
-            background-color: #2d3748;
-            color: white;
-            border: 1px solid #4a5568;
-            border-radius: 0.25rem;
-            padding: 0.25rem;
-        }
-        #crewComplementTable td, #crewComplementTable th {
-            padding: 0.5rem;
-            text-align: center;
-        }
-        #crewComplementTable th {
-            background-color: #2d3748;
-        }
     </style>
 </head>
 <body class="light-mode">
@@ -63,7 +49,6 @@
         </div>
 
         <div id="shipSheet" class="ship-card rounded-lg p-6">
-            <!-- Ship name and model -->
             <div class="grid grid-cols-3 gap-4 mb-4">
                 <div class="col-span-2">
                     <h1 id="shipName" class="text-3xl font-bold editable">Ship Name</h1>
@@ -74,7 +59,6 @@
                 </div>
             </div>
 
-            <!-- Crew and ship stats -->
             <div class="grid grid-cols-3 gap-4 mb-4">
                 <div class="ship-card p-4 rounded">
                     <h2 class="text-xl font-bold mb-2">Crew</h2>
@@ -126,7 +110,6 @@
                 </div>
             </div>
 
-            <!-- Helm information -->
             <div class="mt-4">
                 <h2 class="text-2xl font-bold mb-2">Helm</h2>
                 <div id="helmInfo" class="ship-card p-4 rounded">
@@ -135,7 +118,6 @@
                 </div>
             </div>
 
-            <!-- Crew Complement and Modules -->
             <div class="grid grid-cols-2 gap-4 mb-4">
                 <div>
                     <h2 class="text-2xl font-bold mb-2">Crew Complement</h2>
@@ -144,21 +126,13 @@
                             <tr>
                                 <th>Type of Crew</th>
                                 <th>#</th>
-                                <th>Rate (Day/Month)</th>
-                                <th>Total per Day</th>
-                                <th>Total per Month</th>
+                                <th>Rate</th>
+                                <th>Per Month</th>
                             </tr>
                         </thead>
                         <tbody id="crewComplementTable">
                             <!-- Crew complement rows will be added here dynamically -->
                         </tbody>
-                        <tfoot>
-                            <tr>
-                                <td colspan="3" class="text-right font-bold">Total:</td>
-                                <td id="totalPerDay" class="font-bold"></td>
-                                <td id="totalPerMonth" class="font-bold"></td>
-                            </tr>
-                        </tfoot>
                     </table>
                 </div>
                 <div>
@@ -170,7 +144,6 @@
                 </div>
             </div>
 
-            <!-- Weapons -->
             <div class="mb-4">
                 <h2 class="text-2xl font-bold mb-2">Weapons</h2>
                 <table class="w-full">
@@ -191,7 +164,6 @@
                 <button id="addWeapon" class="mt-2 px-4 py-2 rounded hover transition duration-300">Add Weapon</button>
             </div>
 
-            <!-- Ship Features and Upgrades -->
             <div class="mb-4">
                 <h2 class="text-2xl font-bold mb-2">Ship Features and Upgrades</h2>
                 <ul id="upgradesList">
@@ -200,7 +172,6 @@
                 <button id="addUpgrade" class="mt-2 px-4 py-2 rounded hover transition duration-300">Add Upgrade</button>
             </div>
 
-            <!-- Cargo Storage -->
             <div class="mb-4">
                 <h2 class="text-2xl font-bold mb-2">Cargo Storage</h2>
                 <div class="grid grid-cols-4 gap-4">
@@ -229,7 +200,6 @@
         </div>
     </div>
 
-    <!-- Popup for dice roll results -->
     <div id="popup" class="popup">
         <h2 class="text-2xl font-bold mb-2">Dice Roll Result</h2>
         <p id="rollResult"></p>
@@ -237,16 +207,15 @@
     </div>
 
     <div id="overlay" class="overlay"></div>
-
-    <script>
+        <script>
         let currentShip;
         let editMode = false;
-
+    
         document.addEventListener('DOMContentLoaded', function() {
             const urlParams = new URLSearchParams(window.location.search);
             const shipId = urlParams.get('id');
             loadShip(shipId);
-
+    
             document.getElementById('editModeToggle').addEventListener('click', toggleEditMode);
             document.getElementById('toggleDarkMode').addEventListener('click', toggleDarkMode);
             document.getElementById('decreaseHP').addEventListener('click', () => adjustHullPoints(-1));
@@ -255,508 +224,457 @@
             document.getElementById('addWeapon').addEventListener('click', showWeaponDropdown);
             document.getElementById('addUpgrade').addEventListener('click', showUpgradeDropdown);
             document.getElementById('closePopup').addEventListener('click', closePopup);
-
+    
             document.getElementById('confirmAddModule').addEventListener('click', confirmAddModule);
             document.getElementById('cancelAddModule').addEventListener('click', hideModuleDropdown);
             document.getElementById('confirmAddWeapon').addEventListener('click', confirmAddWeapon);
             document.getElementById('cancelAddWeapon').addEventListener('click', hideWeaponDropdown);
             document.getElementById('confirmAddUpgrade').addEventListener('click', confirmAddUpgrade);
             document.getElementById('cancelAddUpgrade').addEventListener('click', hideUpgradeDropdown);
-
+    
             // Add event listeners for cargo inputs
             ['copperInput', 'silverInput', 'goldInput', 'platinumInput', 'cargoItems'].forEach(id => {
                 document.getElementById(id).addEventListener('change', saveShipChanges);
             });
-
+    
             // Populate dropdowns
             populateDropdown('moduleSelect', wildjammerData.modules);
             populateDropdown('weaponSelect', wildjammerData.weapons);
             populateDropdown('upgradeSelect', wildjammerData.upgrades);
-
-            // Initialize crew complement
-            initializeCrewComplement();
-        });
-
-        function loadShip(shipId) {
-            const ships = JSON.parse(localStorage.getItem('wildjammerShips')) || {};
-            const shipData = ships[shipId];
-            if (shipData) {
-                currentShip = new Ship(shipData);
-                console.log('Loaded ship:', currentShip);
+        });   
+            function loadShip(shipId) {
+                const ships = JSON.parse(localStorage.getItem('wildjammerShips')) || {};
+                const shipData = ships[shipId];
+                if (shipData) {
+                    currentShip = new Ship(shipData);
+                    console.log('Loaded ship:', currentShip);
+                    
+                    // Ensure weaponModifiers is initialized
+                    currentShip.weaponModifiers = currentShip.weaponModifiers || {};
+                    
+                    // Reapply all upgrades
+                    currentShip.upgrades.forEach(upgradeKey => {
+                        applyUpgradeEffect(upgradeKey, true);
+                    });
+                } else {
+                    console.error('Ship not found in localStorage');
+                    window.location.href = 'create-ship.html';
+                    return;
+                }
+                updateShipDisplay();
+            }
+        
+            function updateShipDisplay() {
+                document.getElementById('shipName').textContent = currentShip.name;
+                document.getElementById('shipModel').textContent = currentShip.hullType;
+                document.getElementById('sizeClassification').textContent = `${currentShip.size[0]}x${currentShip.size[1]}`;
+                document.getElementById('captain').textContent = currentShip.captain;
+                document.getElementById('helmsman').textContent = currentShip.helmsman;
+                document.getElementById('boatswain').textContent = currentShip.boatswain;
+                document.getElementById('gunner1').textContent = currentShip.gunner1;
+                document.getElementById('gunner2').textContent = currentShip.gunner2;
+                document.getElementById('gunner3').textContent = currentShip.gunner3;
+                document.getElementById('fighterHelmsman1').textContent = currentShip.fighterHelmsman1;
+                document.getElementById('fighterHelmsman2').textContent = currentShip.fighterHelmsman2;
+                document.getElementById('fighterHelmsman3').textContent = currentShip.fighterHelmsman3;
+                document.getElementById('maneuverability').textContent = currentShip.maneuverability;
+                const gridMovement = Math.floor(currentShip.speed / 500);
+                document.getElementById('tacticalSpeed').textContent = `${currentShip.speed} (${gridMovement} grids)`;
+                document.getElementById('hoverSpeed').textContent = "20 mph";
+                document.getElementById('bulwarkPoints').textContent = currentShip.bp;
+                document.getElementById('hullPoints').value = currentShip.hp;
+                document.getElementById('armorClass').textContent = currentShip.ac;
+        
+                // Update helm information
+                const helmInfo = wildjammerData.helms[currentShip.helmType];
+                document.getElementById('helmName').textContent = helmInfo.name;
+                document.getElementById('helmDescription').textContent = helmInfo.description;
+        
+                // Update weapons list
+                updateWeaponsList();
+        
+                // Update modules list
+                updateModulesList();
+        
+                // Update upgrades list
+                updateUpgradesList();
+        
+                // Update cargo information
+                document.getElementById('copperInput').value = currentShip.cargo.copper;
+                document.getElementById('silverInput').value = currentShip.cargo.silver;
+                document.getElementById('goldInput').value = currentShip.cargo.gold;
+                document.getElementById('platinumInput').value = currentShip.cargo.platinum;
+                document.getElementById('cargoItems').value = currentShip.cargo.items;
+            }
+            function updateWeaponsList() {
+                console.log('Updating weapons list:', currentShip.weapons);
+                const weaponsList = document.getElementById('weaponsList');
+                weaponsList.innerHTML = '';
                 
-                // Ensure weaponModifiers is initialized
-                currentShip.weaponModifiers = currentShip.weaponModifiers || {};
-                
-                // Reapply all upgrades
-                currentShip.upgrades.forEach(upgradeKey => {
-                    applyUpgradeEffect(upgradeKey, true);
+                currentShip.weapons.forEach((weaponKey, index) => {
+                    const weapon = wildjammerData.weapons[weaponKey];
+                    if (weapon) {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td class="text-left py-2">${weapon.name}</td>
+                            <td class="text-center py-2">
+                                <input type="number" class="rounded p-1 w-16 text-center weapon-to-hit" value="${currentShip.weaponModifiers?.[weaponKey]?.toHit || 0}" data-index="${index}">
+                            </td>
+                            <td class="text-center py-2">
+                                ${weapon.damage} + 
+                                <input type="number" class="rounded p-1 w-16 text-center weapon-damage-modifier" value="${currentShip.weaponModifiers?.[weaponKey]?.damage || 0}" data-index="${index}">
+                            </td>
+                            <td class="text-center py-2">${weapon.range.normal}/${weapon.range.long}</td>
+                            <td class="text-center py-2">
+                                <div class="flex items-center justify-center">
+                                    <button class="px-2 py-1 bg-red-600 text-white rounded mr-2" onclick="adjustWeaponHP(${index}, -1)">-</button>
+                                    <input type="number" class="rounded p-1 w-16 text-center weapon-hp" value="${currentShip.weaponModifiers?.[weaponKey]?.hp || 10}" data-index="${index}" readonly>
+                                    <button class="px-2 py-1 bg-green-600 text-white rounded ml-2" onclick="adjustWeaponHP(${index}, 1)">+</button>
+                                </div>
+                            </td>
+                            <td class="text-center py-2">
+                                <button class="px-2 py-1 rounded mr-2" onclick="rollWeaponAttack(${index})">Roll</button>
+                                <button class="px-2 py-1 rounded" onclick="removeWeapon(${index})">Remove</button>
+                            </td>
+                        `;
+                        weaponsList.appendChild(row);
+                    } else {
+                        console.error(`Weapon not found: ${weaponKey}`);
+                    }
                 });
-            } else {
-                console.error('Ship not found in localStorage');
-                window.location.href = 'create-ship.html';
-                return;
             }
-            updateShipDisplay();
-        }
-
-        function updateShipDisplay() {
-            document.getElementById('shipName').textContent = currentShip.name;
-            document.getElementById('shipModel').textContent = currentShip.hullType;
-            document.getElementById('sizeClassification').textContent = `${currentShip.size[0]}x${currentShip.size[1]}`;
-            document.getElementById('captain').textContent = currentShip.captain;
-            document.getElementById('helmsman').textContent = currentShip.helmsman;
-            document.getElementById('boatswain').textContent = currentShip.boatswain;
-            document.getElementById('gunner1').textContent = currentShip.gunner1;
-            document.getElementById('gunner2').textContent = currentShip.gunner2;
-            document.getElementById('gunner3').textContent = currentShip.gunner3;
-            document.getElementById('fighterHelmsman1').textContent = currentShip.fighterHelmsman1;
-            document.getElementById('fighterHelmsman2').textContent = currentShip.fighterHelmsman2;
-            document.getElementById('fighterHelmsman3').textContent = currentShip.fighterHelmsman3;
-            document.getElementById('maneuverability').textContent = currentShip.maneuverability;
-            const gridMovement = Math.floor(currentShip.speed / 500);
-            document.getElementById('tacticalSpeed').textContent = `${currentShip.speed} (${gridMovement} grids)`;
-            document.getElementById('hoverSpeed').textContent = "20 mph";
-            document.getElementById('bulwarkPoints').textContent = currentShip.bp;
-            document.getElementById('hullPoints').value = currentShip.hp;
-            document.getElementById('armorClass').textContent = currentShip.ac;
-
-            // Update helm information
-            const helmInfo = wildjammerData.helms[currentShip.helmType];
-            document.getElementById('helmName').textContent = helmInfo.name;
-            document.getElementById('helmDescription').textContent = helmInfo.description;
-
-            // Update weapons list
-            updateWeaponsList();
-
-            // Update modules list
-            updateModulesList();
-
-            // Update upgrades list
-            updateUpgradesList();
-
-            // Update cargo information
-            document.getElementById('copperInput').value = currentShip.cargo.copper;
-            document.getElementById('silverInput').value = currentShip.cargo.silver;
-            document.getElementById('goldInput').value = currentShip.cargo.gold;
-            document.getElementById('platinumInput').value = currentShip.cargo.platinum;
-            document.getElementById('cargoItems').value = currentShip.cargo.items;
-
-            // Load crew complement
-            loadCrewComplement(currentShip.crewComplement);
-        }
-
-        function updateWeaponsList() {
-            console.log('Updating weapons list:', currentShip.weapons);
-            const weaponsList = document.getElementById('weaponsList');
-            weaponsList.innerHTML = '';
-            
-            currentShip.weapons.forEach((weaponKey, index) => {
-                const weapon = wildjammerData.weapons[weaponKey];
-                if (weapon) {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td class="text-left py-2">${weapon.name}</td>
-                        <td class="text-center py-2">
-                            <input type="number" class="rounded p-1 w-16 text-center weapon-to-hit" value="${currentShip.weaponModifiers?.[weaponKey]?.toHit || 0}" data-index="${index}">
-                        </td>
-                        <td class="text-center py-2">
-                            ${weapon.damage} + 
-                            <input type="number" class="rounded p-1 w-16 text-center weapon-damage-modifier" value="${currentShip.weaponModifiers?.[weaponKey]?.damage || 0}" data-index="${index}">
-                        </td>
-                        <td class="text-center py-2">${weapon.range.normal}/${weapon.range.long}</td>
-                        <td class="text-center py-2">
-                            <div class="flex items-center justify-center">
-                                <button class="px-2 py-1 bg-red-600 text-white rounded mr-2" onclick="adjustWeaponHP(${index}, -1)">-</button>
-                                <input type="number" class="rounded p-1 w-16 text-center weapon-hp" value="${currentShip.weaponModifiers?.[weaponKey]?.hp || 10}" data-index="${index}" readonly>
-                                <button class="px-2 py-1 bg-green-600 text-white rounded ml-2" onclick="adjustWeaponHP(${index}, 1)">+</button>
-                            </div>
-                        </td>
-                        <td class="text-center py-2">
-                            <button class="px-2 py-1 rounded mr-2" onclick="rollWeaponAttack(${index})">Roll</button>
-                            <button class="px-2 py-1 rounded" onclick="removeWeapon(${index})">Remove</button>
-                        </td>
-                    `;
-                    weaponsList.appendChild(row);
-                } else {
-                    console.error(`Weapon not found: ${weaponKey}`);
-                }
-            });
-        }
-
-        function adjustWeaponHP(index, amount) {
-            const weaponKey = currentShip.weapons[index];
-            if (!currentShip.weaponModifiers) currentShip.weaponModifiers = {};
-            if (!currentShip.weaponModifiers[weaponKey]) currentShip.weaponModifiers[weaponKey] = {};
-            currentShip.weaponModifiers[weaponKey].hp = (currentShip.weaponModifiers[weaponKey].hp || 10) + amount;
-            updateWeaponsList();
-            saveShipChanges();
-        }
-
-        function updateModulesList() {
-            console.log('Updating modules list:', currentShip.modules);
-            const modulesList = document.getElementById('modulesList');
-            modulesList.innerHTML = '';
-            currentShip.modules.forEach((moduleKey, index) => {
-                const module = wildjammerData.modules[moduleKey];
-                if (module) {
-                    const li = document.createElement('li');
-                    li.innerHTML = `
-                        <strong>${module.name}</strong>
-                        <p>${module.description}</p>
-                        ${module.uses ? `
-                            <div class="module-uses" data-index="${index}">
-                                <label>Uses: 
-                                    <input type="number" class="rounded p-1 w-16 text-center module-use-count" 
-                                           value="${currentShip.moduleUses?.[moduleKey] || 0}" 
-                                           min="0" max="${module.uses.max}" data-index="${index}">
-                                    / ${module.uses.max} per ${module.uses.per}
-                                </label>
-                            </div>
-                        ` : ''}
-                        <button class="px-2 py-1 bg-red-600 text-white rounded mt-2" onclick="removeModule(${index})">Remove</button>
-                    `;
-                    modulesList.appendChild(li);
-                } else {
-                    console.error(`Module not found: ${moduleKey}`);
-                }
-            });
-        }
-
-        function updateUpgradesList() {
-            console.log('Updating upgrades list:', currentShip.upgrades);
-            const upgradesList = document.getElementById('upgradesList');
-            upgradesList.innerHTML = '';
-            currentShip.upgrades.forEach((upgradeKey, index) => {
-                const upgrade = wildjammerData.upgrades[upgradeKey];
-                if (upgrade) {
-                    const li = document.createElement('li');
-                    li.className = 'mb-4';
-                    li.innerHTML = `
-                        <strong class="block mb-1">${upgrade.name}</strong>
-                        <p class="mb-2">${upgrade.description}</p>
-                        <button class="px-2 py-1 bg-red-600 text-white rounded" onclick="removeUpgrade(${index})">Remove</button>
-                    `;
-                    upgradesList.appendChild(li);
-                } else {
-                    console.error(`Upgrade not found: ${upgradeKey}`);
-                }
-            });
-        }
-
-        function toggleEditMode() {
-            editMode = !editMode;
-            document.querySelectorAll('.editable').forEach(el => {
-                el.contentEditable = editMode;
-            });
-            document.getElementById('editModeToggle').textContent = editMode ? 'Save Changes' : 'Toggle Edit Mode';
-            if (!editMode) {
-                saveShipChanges();
-            }
-        }
-
-        function adjustHullPoints(amount) {
-            const hullPointsInput = document.getElementById('hullPoints');
-            hullPointsInput.value = parseInt(hullPointsInput.value) + amount;
-            saveShipChanges();
-        }
-
-        function removeModule(index) {
-            currentShip.removeModule(index);
-            updateModulesList();
-            saveShipChanges();
-        }
-
-        function removeWeapon(index) {
-            currentShip.removeWeapon(index);
-            updateWeaponsList();
-            saveShipChanges();
-        }
-
-        function removeUpgrade(index) {
-            const upgradeKey = currentShip.upgrades[index];
-            currentShip.upgrades.splice(index, 1); // Remove the upgrade from the array
-            applyUpgradeEffect(upgradeKey, false);
-            updateUpgradesList();
-            updateShipDisplay();
-            saveShipChanges();
-        }
-
-        function applyUpgradeEffect(upgradeKey, isAdding) {
-            const upgrade = wildjammerData.upgrades[upgradeKey];
-            if (upgrade && upgrade.effect) {
-                if (isAdding) {
-                    upgrade.effect(currentShip);
-                } else {
-                    // Reverse the effect when removing
-                    const reverseEffect = (ship) => {
-                        switch (upgrade.name) {
-                            case "Enchanted Hull":
-                                ship.ac -= 1;
-                                break;
-                            case "Reinforced Hull":
-                                ship.hp -= 16;
-                                break;
-                            case "Adaptable Sails":
-                                ship.maneuverability -= 45;
-                                break;
-                            case "Gliding Sails":
-                                ship.speed -= 500;
-                                break;
-                            case "Reinforced Bulwark":
-                                ship.bp -= 8;
-                                break;
-                            // Add cases for other upgrades that modify stats
-                            default:
-                                console.warn(`No reverse effect defined for upgrade: ${upgrade.name}`);
-                        }
-                    };
-                    reverseEffect(currentShip);
-                }
-            }
-            console.log('Applied upgrade effect:', upgradeKey, isAdding, currentShip);
-            updateShipDisplay(); // Ensure the display is updated after applying/removing upgrades
-        }
-
-        function rollWeaponAttack(index) {
-            const weapon = wildjammerData.weapons[currentShip.weapons[index]];
-            const toHitModifier = parseInt(document.querySelector(`.weapon-to-hit[data-index="${index}"]`).value) || 0;
-            const damageModifier = parseInt(document.querySelector(`.weapon-damage-modifier[data-index="${index}"]`).value) || 0;
-
-            const toHitRoll = Math.floor(Math.random() * 20) + 1;
-            const totalToHit = toHitRoll + toHitModifier;
-
-            const damageRoll = rollDice(weapon.damage);
-            const totalDamage = damageRoll + damageModifier;
-
-            const result = `To hit: ${toHitRoll} + ${toHitModifier} = ${totalToHit}<br>Damage: ${damageRoll} + ${damageModifier} = ${totalDamage} ${weapon.type} damage`;
-
-            showPopup(result);
-        }
-
-        function rollDice(diceNotation) {
-            const [count, sides] = diceNotation.split('d').map(Number);
-            let total = 0;
-            for (let i = 0; i < count; i++) {
-                total += Math.floor(Math.random() * sides) + 1;
-            }
-            return total;
-        }
-
-        function showPopup(content) {
-            document.getElementById('rollResult').innerHTML = content;
-            document.getElementById('popup').style.display = 'block';
-            document.getElementById('overlay').style.display = 'block';
-        }
-
-        function closePopup() {
-            document.getElementById('popup').style.display = 'none';
-            document.getElementById('overlay').style.display = 'none';
-        }
-
-        function saveShipChanges() {
-            // Update currentShip object with edited values
-            currentShip.name = document.getElementById('shipName').textContent;
-            currentShip.captain = document.getElementById('captain').textContent;
-            currentShip.helmsman = document.getElementById('helmsman').textContent;
-            currentShip.boatswain = document.getElementById('boatswain').textContent;
-            currentShip.gunner1 = document.getElementById('gunner1').textContent;
-            currentShip.gunner2 = document.getElementById('gunner2').textContent;
-            currentShip.gunner3 = document.getElementById('gunner3').textContent;
-            currentShip.fighterHelmsman1 = document.getElementById('fighterHelmsman1').textContent;
-            currentShip.fighterHelmsman2 = document.getElementById('fighterHelmsman2').textContent;
-            currentShip.fighterHelmsman3 = document.getElementById('fighterHelmsman3').textContent;
-            currentShip.maneuverability = parseInt(document.getElementById('maneuverability').textContent);
-            currentShip.speed = parseInt(document.getElementById('tacticalSpeed').textContent.split(' ')[0]); // Extract the speed value
-            currentShip.bp = parseInt(document.getElementById('bulwarkPoints').textContent);
-            currentShip.hp = parseInt(document.getElementById('hullPoints').value);
-            currentShip.ac = parseInt(document.getElementById('armorClass').textContent);
-
-            currentShip.cargo = {
-                copper: parseInt(document.getElementById('copperInput').value) || 0,
-                silver: parseInt(document.getElementById('silverInput').value) || 0,
-                gold: parseInt(document.getElementById('goldInput').value) || 0,
-                platinum: parseInt(document.getElementById('platinumInput').value) || 0,
-                items: document.getElementById('cargoItems').value
-            };
-
-            // Save weapon modifiers and HP
-            currentShip.weapons.forEach((weaponKey, index) => {
-                const toHitModifier = parseInt(document.querySelector(`.weapon-to-hit[data-index="${index}"]`).value) || 0;
-                const damageModifier = parseInt(document.querySelector(`.weapon-damage-modifier[data-index="${index}"]`).value) || 0;
-                const hpInput = document.querySelector(`.weapon-hp[data-index="${index}"]`);
-                const hp = parseInt(hpInput.value) || 10;
+            function adjustWeaponHP(index, amount) {
+                const weaponKey = currentShip.weapons[index];
                 if (!currentShip.weaponModifiers) currentShip.weaponModifiers = {};
                 if (!currentShip.weaponModifiers[weaponKey]) currentShip.weaponModifiers[weaponKey] = {};
-                currentShip.weaponModifiers[weaponKey] = { toHit: toHitModifier, damage: damageModifier, hp: hp };
-            });
-
-            // Save module uses
-            if (!currentShip.moduleUses) currentShip.moduleUses = {};
-            currentShip.modules.forEach((moduleKey, index) => {
-                const module = wildjammerData.modules[moduleKey];
-                if (module && module.uses) {
-                    const useCountInput = document.querySelector(`.module-use-count[data-index="${index}"]`);
-                    const usedCount = parseInt(useCountInput.value) || 0;
-                    currentShip.moduleUses[moduleKey] = usedCount;
-                });
-
-            // Save crew complement
-            currentShip.crewComplement = saveCrewComplement();
-
-            // Save updated ship to localStorage
-            const ships = JSON.parse(localStorage.getItem('wildjammerShips')) || {};
-            ships[currentShip.id] = currentShip.toJSON();
-            localStorage.setItem('wildjammerShips', JSON.stringify(ships));
-            console.log('Ship changes saved');
-        }
-
-        function populateDropdown(selectId, data) {
-            const select = document.getElementById(selectId);
-            select.innerHTML = '';
-            for (const [key, value] of Object.entries(data)) {
-                const option = document.createElement('option');
-                option.value = key;
-                option.textContent = value.name;
-                select.appendChild(option);
-            }
-        }
-
-        function showModuleDropdown() {
-            document.getElementById('moduleDropdown').style.display = 'block';
-        }
-
-        function hideModuleDropdown() {
-            document.getElementById('moduleDropdown').style.display = 'none';
-        }
-
-        function confirmAddModule() {
-            const moduleKey = document.getElementById('moduleSelect').value;
-            if (moduleKey && wildjammerData.modules[moduleKey]) {
-                currentShip.addModule(moduleKey);
-                updateModulesList();
-                saveShipChanges();
-                hideModuleDropdown();
-            } else {
-                alert('Invalid module selection');
-            }
-        }
-
-        function showWeaponDropdown() {
-            document.getElementById('weaponDropdown').style.display = 'block';
-        }
-
-        function hideWeaponDropdown() {
-            document.getElementById('weaponDropdown').style.display = 'none';
-        }
-
-        function confirmAddWeapon() {
-            const weaponKey = document.getElementById('weaponSelect').value;
-            if (weaponKey && wildjammerData.weapons[weaponKey]) {
-                currentShip.addWeapon(weaponKey);
+                currentShip.weaponModifiers[weaponKey].hp = (currentShip.weaponModifiers[weaponKey].hp || 10) + amount;
                 updateWeaponsList();
                 saveShipChanges();
-                hideWeaponDropdown();
-            } else {
-                alert('Invalid weapon selection');
             }
-        }
-
-        function showUpgradeDropdown() {
-            document.getElementById('upgradeDropdown').style.display = 'block';
-        }
-
-        function hideUpgradeDropdown() {
-            document.getElementById('upgradeDropdown').style.display = 'none';
-        }
-
-        function confirmAddUpgrade() {
-            const upgradeKey = document.getElementById('upgradeSelect').value;
-            if (upgradeKey && wildjammerData.upgrades[upgradeKey]) {
-                currentShip.addUpgrade(upgradeKey);
-                applyUpgradeEffect(upgradeKey, true);
+            function updateModulesList() {
+                console.log('Updating modules list:', currentShip.modules);
+                const modulesList = document.getElementById('modulesList');
+                modulesList.innerHTML = '';
+                currentShip.modules.forEach((moduleKey, index) => {
+                    const module = wildjammerData.modules[moduleKey];
+                    if (module) {
+                        const li = document.createElement('li');
+                        li.innerHTML = `
+                            <strong>${module.name}</strong>
+                            <p>${module.description}</p>
+                            ${module.uses ? `
+                                <div class="module-uses" data-index="${index}">
+                                    <label>Uses: 
+                                        <input type="number" class="rounded p-1 w-16 text-center module-use-count" 
+                                               value="${currentShip.moduleUses?.[moduleKey] || 0}" 
+                                               min="0" max="${module.uses.max}" data-index="${index}">
+                                        / ${module.uses.max} per ${module.uses.per}
+                                    </label>
+                                </div>
+                            ` : ''}
+                            <button class="px-2 py-1 bg-red-600 text-white rounded mt-2" onclick="removeModule(${index})">Remove</button>
+                        `;
+                        modulesList.appendChild(li);
+                    } else {
+                        console.error(`Module not found: ${moduleKey}`);
+                    }
+                });
+            }
+            function updateUpgradesList() {
+                console.log('Updating upgrades list:', currentShip.upgrades);
+                const upgradesList = document.getElementById('upgradesList');
+                upgradesList.innerHTML = '';
+                currentShip.upgrades.forEach((upgradeKey, index) => {
+                    const upgrade = wildjammerData.upgrades[upgradeKey];
+                    if (upgrade) {
+                        const li = document.createElement('li');
+                        li.className = 'mb-4';
+                        li.innerHTML = `
+                            <strong class="block mb-1">${upgrade.name}</strong>
+                            <p class="mb-2">${upgrade.description}</p>
+                            <button class="px-2 py-1 bg-red-600 text-white rounded" onclick="removeUpgrade(${index})">Remove</button>
+                        `;
+                        upgradesList.appendChild(li);
+                    } else {
+                        console.error(`Upgrade not found: ${upgradeKey}`);
+                    }
+                });
+            }
+        
+            function toggleEditMode() {
+                editMode = !editMode;
+                document.querySelectorAll('.editable').forEach(el => {
+                    el.contentEditable = editMode;
+                });
+                document.getElementById('editModeToggle').textContent = editMode ? 'Save Changes' : 'Toggle Edit Mode';
+                if (!editMode) {
+                    saveShipChanges();
+                }
+            }
+        
+            function adjustHullPoints(amount) {
+                const hullPointsInput = document.getElementById('hullPoints');
+                hullPointsInput.value = parseInt(hullPointsInput.value) + amount;
+                saveShipChanges();
+            }
+        
+            function addModule() {
+                const moduleKey = prompt('Enter module key:');
+                if (moduleKey && wildjammerData.modules[moduleKey]) {
+                    currentShip.addModule(moduleKey);
+                    updateModulesList();
+                    saveShipChanges();
+                } else {
+                    alert('Invalid module key');
+                }
+            }
+        
+            function removeModule(index) {
+                currentShip.removeModule(index);
+                updateModulesList();
+                saveShipChanges();
+            }
+        
+            function addWeapon() {
+                const weaponKey = prompt('Enter weapon key:');
+                if (weaponKey && wildjammerData.weapons[weaponKey]) {
+                    currentShip.addWeapon(weaponKey);
+                    updateWeaponsList();
+                    saveShipChanges();
+                } else {
+                    alert('Invalid weapon key');
+                }
+            }
+        
+            function removeWeapon(index) {
+                currentShip.removeWeapon(index);
+                updateWeaponsList();
+                saveShipChanges();
+            }
+        
+            function addUpgrade() {
+                const upgradeKey = prompt('Enter upgrade key:');
+                if (upgradeKey && wildjammerData.upgrades[upgradeKey]) {
+                    currentShip.addUpgrade(upgradeKey);
+                    applyUpgradeEffect(upgradeKey, true);
+                    updateUpgradesList();
+                    updateShipDisplay();
+                    saveShipChanges();
+                } else {
+                    alert('Invalid upgrade key');
+                }
+            }
+        
+            function removeUpgrade(index) {
+                const upgradeKey = currentShip.upgrades[index];
+                currentShip.upgrades.splice(index, 1); // Remove the upgrade from the array
+                applyUpgradeEffect(upgradeKey, false);
                 updateUpgradesList();
                 updateShipDisplay();
                 saveShipChanges();
-                hideUpgradeDropdown();
-            } else {
-                alert('Invalid upgrade selection');
             }
-        }
-
-        const crewTypes = [
-            { name: "Green Crew", costPerDay: 1.5, costPerMonth: 45 },
-            { name: "Veteran Crew", costPerDay: 3, costPerMonth: 90 },
-            { name: "Mercenaries", costPerDay: 5, costPerMonth: 150 },
-            { name: "Giff Mercenaries", costPerDay: 6.5, costPerMonth: 195 },
-            { name: "Hurwaeti Mercenaries", costPerDay: 8, costPerMonth: 240 }
-        ];
-
-        function initializeCrewComplement() {
-            const table = document.getElementById('crewComplementTable');
-            table.innerHTML = '';
-
-            crewTypes.forEach((crew, index) => {
-                const row = table.insertRow();
-                row.innerHTML = `
-                    <td>${crew.name}</td>
-                    <td><input type="number" min="0" value="0" class="crew-count w-16 text-center" data-index="${index}"></td>
-                    <td>${crew.costPerDay}gp / ${crew.costPerMonth}gp</td>
-                    <td class="crew-total-day"></td>
-                    <td class="crew-total-month"></td>
-                `;
-            });
-
-            document.querySelectorAll('.crew-count').forEach(input => {
-                input.addEventListener('input', updateCrewCosts);
-            });
-
-            updateCrewCosts();
-        }
-
-        function updateCrewCosts() {
-            let totalPerDay = 0;
-            let totalPerMonth = 0;
-
-            document.querySelectorAll('.crew-count').forEach((input, index) => {
-                const count = parseInt(input.value) || 0;
-                const crew = crewTypes[index];
-                const totalDay = count * crew.costPerDay;
-                const totalMonth = count * crew.costPerMonth;
-
-                totalPerDay += totalDay;
-                totalPerMonth += totalMonth;
-
-                const row = input.closest('tr');
-                row.querySelector('.crew-total-day').textContent = totalDay.toFixed(2) + 'gp';
-                row.querySelector('.crew-total-month').textContent = totalMonth.toFixed(2) + 'gp';
-            });
-
-            document.getElementById('totalPerDay').textContent = totalPerDay.toFixed(2) + 'gp';
-            document.getElementById('totalPerMonth').textContent = totalPerMonth.toFixed(2) + 'gp';
-
-            saveShipChanges();
-        }
-
-        function saveCrewComplement() {
-            const crewComplement = {};
-            document.querySelectorAll('.crew-count').forEach((input, index) => {
-                const count = parseInt(input.value) || 0;
-                crewComplement[crewTypes[index].name] = count;
-            });
-            return crewComplement;
-        }
-
-        function loadCrewComplement(savedCrewComplement) {
-            if (savedCrewComplement) {
-                document.querySelectorAll('.crew-count').forEach((input, index) => {
-                    const crewName = crewTypes[index].name;
-                    input.value = savedCrewComplement[crewName] || 0;
+        
+            function applyUpgradeEffect(upgradeKey, isAdding) {
+                const upgrade = wildjammerData.upgrades[upgradeKey];
+                if (upgrade && upgrade.effect) {
+                    if (isAdding) {
+                        upgrade.effect(currentShip);
+                    } else {
+                        // Reverse the effect when removing
+                        const reverseEffect = (ship) => {
+                            switch (upgrade.name) {
+                                case "Enchanted Hull":
+                                    ship.ac -= 1;
+                                    break;
+                                case "Reinforced Hull":
+                                    ship.hp -= 16;
+                                    break;
+                                case "Adaptable Sails":
+                                    ship.maneuverability -= 45;
+                                    break;
+                                case "Gliding Sails":
+                                    ship.speed -= 500;
+                                    break;
+                                case "Reinforced Bulwark":
+                                    ship.bp -= 8;
+                                    break;
+                                // Add cases for other upgrades that modify stats
+                                default:
+                                    console.warn(`No reverse effect defined for upgrade: ${upgrade.name}`);
+                            }
+                        };
+                        reverseEffect(currentShip);
+                    }
+                }
+                console.log('Applied upgrade effect:', upgradeKey, isAdding, currentShip);
+                updateShipDisplay(); // Ensure the display is updated after applying/removing upgrades
+            }
+        
+            function rollWeaponAttack(index) {
+                const weapon = wildjammerData.weapons[currentShip.weapons[index]];
+                const toHitModifier = parseInt(document.querySelector(`.weapon-to-hit[data-index="${index}"]`).value) || 0;
+                const damageModifier = parseInt(document.querySelector(`.weapon-damage-modifier[data-index="${index}"]`).value) || 0;
+        
+                const toHitRoll = Math.floor(Math.random() * 20) + 1;
+                const totalToHit = toHitRoll + toHitModifier;
+        
+                const damageRoll = rollDice(weapon.damage);
+                const totalDamage = damageRoll + damageModifier;
+        
+                const result = `To hit: ${toHitRoll} + ${toHitModifier} = ${totalToHit}<br>Damage: ${damageRoll} + ${damageModifier} = ${totalDamage} ${weapon.type} damage`;
+        
+                showPopup(result);
+            }
+        
+            function rollDice(diceNotation) {
+                const [count, sides] = diceNotation.split('d').map(Number);
+                let total = 0;
+                for (let i = 0; i < count; i++) {
+                    total += Math.floor(Math.random() * sides) + 1;
+                }
+                return total;
+            }
+        
+            function showPopup(content) {
+                document.getElementById('rollResult').innerHTML = content;
+                document.getElementById('popup').style.display = 'block';
+                document.getElementById('overlay').style.display = 'block';
+            }
+        
+            function closePopup() {
+                document.getElementById('popup').style.display = 'none';
+                document.getElementById('overlay').style.display = 'none';
+            }
+        
+            function saveShipChanges() {
+                // Update currentShip object with edited values
+                currentShip.name = document.getElementById('shipName').textContent;
+                currentShip.captain = document.getElementById('captain').textContent;
+                currentShip.helmsman = document.getElementById('helmsman').textContent;
+                currentShip.boatswain = document.getElementById('boatswain').textContent;
+                currentShip.gunner1 = document.getElementById('gunner1').textContent;
+                currentShip.gunner2 = document.getElementById('gunner2').textContent;
+                currentShip.gunner3 = document.getElementById('gunner3').textContent;
+                currentShip.fighterHelmsman1 = document.getElementById('fighterHelmsman1').textContent;
+                currentShip.fighterHelmsman2 = document.getElementById('fighterHelmsman2').textContent;
+                currentShip.fighterHelmsman3 = document.getElementById('fighterHelmsman3').textContent;
+                currentShip.maneuverability = parseInt(document.getElementById('maneuverability').textContent);
+                currentShip.speed = parseInt(document.getElementById('tacticalSpeed').textContent.split(' ')[0]); // Extract the speed value
+                currentShip.bp = parseInt(document.getElementById('bulwarkPoints').textContent);
+                currentShip.hp = parseInt(document.getElementById('hullPoints').value);
+                currentShip.ac = parseInt(document.getElementById('armorClass').textContent);
+            
+                currentShip.cargo = {
+                    copper: parseInt(document.getElementById('copperInput').value) || 0,
+                    silver: parseInt(document.getElementById('silverInput').value) || 0,
+                    gold: parseInt(document.getElementById('goldInput').value) || 0,
+                    platinum: parseInt(document.getElementById('platinumInput').value) || 0,
+                    items: document.getElementById('cargoItems').value
+                };
+            
+                // Save weapon modifiers and HP
+                currentShip.weapons.forEach((weaponKey, index) => {
+                    const toHitModifier = parseInt(document.querySelector(`.weapon-to-hit[data-index="${index}"]`).value) || 0;
+                    const damageModifier = parseInt(document.querySelector(`.weapon-damage-modifier[data-index="${index}"]`).value) || 0;
+                    const hpInput = document.querySelector(`.weapon-hp[data-index="${index}"]`);
+                    const hp = parseInt(hpInput.value) || 10;
+                    if (!currentShip.weaponModifiers) currentShip.weaponModifiers = {};
+                    if (!currentShip.weaponModifiers[weaponKey]) currentShip.weaponModifiers[weaponKey] = {};
+                    currentShip.weaponModifiers[weaponKey] = { toHit: toHitModifier, damage: damageModifier, hp: hp };
                 });
-                updateCrewCosts();
+            
+                // Save module uses
+                if (!currentShip.moduleUses) currentShip.moduleUses = {};
+                currentShip.modules.forEach((moduleKey, index) => {
+                    const module = wildjammerData.modules[moduleKey];
+                    if (module && module.uses) {
+                        const useCountInput = document.querySelector(`.module-use-count[data-index="${index}"]`);
+                        const usedCount = parseInt(useCountInput.value) || 0;
+                        currentShip.moduleUses[moduleKey] = usedCount;
+                    }
+                });
+            
+                // Save updated ship to localStorage
+                const ships = JSON.parse(localStorage.getItem('wildjammerShips')) || {};
+                ships[currentShip.id] = currentShip.toJSON();
+                localStorage.setItem('wildjammerShips', JSON.stringify(ships));
+                console.log('Ship changes saved');
             }
+            
+            function populateDropdown(selectId, data) {
+                const select = document.getElementById(selectId);
+                select.innerHTML = '';
+                for (const [key, value] of Object.entries(data)) {
+                    const option = document.createElement('option');
+                    option.value = key;
+                    option.textContent = value.name;
+                    select.appendChild(option);
+                }
+            }
+            
+        function showModuleDropdown() {
+            document.getElementById('moduleDropdown').style.display = 'block';
         }
-    </script>
+    
+        function hideModuleDropdown() {
+            document.getElementById('moduleDropdown').style.display = 'none';
+        }
+            
+                function confirmAddModule() {
+                    const moduleKey = document.getElementById('moduleSelect').value;
+                    if (moduleKey && wildjammerData.modules[moduleKey]) {
+                        currentShip.addModule(moduleKey);
+                        updateModulesList();
+                        saveShipChanges();
+                        hideModuleDropdown();
+                    } else {
+                        alert('Invalid module selection');
+                    }
+                }
+            
+        function showWeaponDropdown() {
+            document.getElementById('weaponDropdown').style.display = 'block';
+        }
+    
+        function hideWeaponDropdown() {
+            document.getElementById('weaponDropdown').style.display = 'none';
+        }
+            
+                function confirmAddWeapon() {
+                    const weaponKey = document.getElementById('weaponSelect').value;
+                    if (weaponKey && wildjammerData.weapons[weaponKey]) {
+                        currentShip.addWeapon(weaponKey);
+                        updateWeaponsList();
+                        saveShipChanges();
+                        hideWeaponDropdown();
+                    } else {
+                        alert('Invalid weapon selection');
+                    }
+                }
+            
+        function showUpgradeDropdown() {
+            document.getElementById('upgradeDropdown').style.display = 'block';
+        }
+    
+        function hideUpgradeDropdown() {
+            document.getElementById('upgradeDropdown').style.display = 'none';
+        }
+            
+                function confirmAddUpgrade() {
+                    const upgradeKey = document.getElementById('upgradeSelect').value;
+                    if (upgradeKey && wildjammerData.upgrades[upgradeKey]) {
+                        currentShip.addUpgrade(upgradeKey);
+                        applyUpgradeEffect(upgradeKey, true);
+                        updateUpgradesList();
+                        updateShipDisplay();
+                        saveShipChanges();
+                        hideUpgradeDropdown();
+                    } else {
+                        alert('Invalid upgrade selection');
+                    }
+                }
 
+        </script>
     <div id="moduleDropdown" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-800 p-4 rounded shadow-lg">
         <select id="moduleSelect" class="w-full p-2 bg-gray-700 text-white rounded">
             <!-- Options will be populated dynamically -->
@@ -766,7 +684,7 @@
             <button id="cancelAddModule" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition duration-300">Cancel</button>
         </div>
     </div>
-
+    
     <div id="weaponDropdown" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-800 p-4 rounded shadow-lg">
         <select id="weaponSelect" class="w-full p-2 bg-gray-700 text-white rounded">
             <!-- Options will be populated dynamically -->
@@ -776,7 +694,7 @@
             <button id="cancelAddWeapon" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition duration-300">Cancel</button>
         </div>
     </div>
-
+    
     <div id="upgradeDropdown" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-800 p-4 rounded shadow-lg">
         <select id="upgradeSelect" class="w-full p-2 bg-gray-700 text-white rounded">
             <!-- Options will be populated dynamically -->
