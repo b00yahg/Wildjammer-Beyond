@@ -20,6 +20,7 @@ class Ship {
         this.modules = data.modules || [];
         this.upgrades = data.upgrades || [];
         this.cargo = data.cargo || { copper: 0, silver: 0, gold: 0, platinum: 0, items: '' };
+        this.crewComplement = data.crewComplement || [];
         
         // New properties for hull information
         this.size = data.size || [0, 0];
@@ -109,7 +110,8 @@ class Ship {
             minCrew: this.minCrew,
             maxCrew: this.maxCrew,
             cargoCapacity: this.cargoCapacity,
-            airEnvelope: this.airEnvelope
+            airEnvelope: this.airEnvelope,
+            crewComplement: this.crewComplement,
         };
     }
 
