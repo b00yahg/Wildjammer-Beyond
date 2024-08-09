@@ -840,7 +840,7 @@ const wildjammerData = {
             type: "Wondrous item, artifact",
             attunement: "requires attunement",
             value: "Priceless",
-            description: "This helm is a modernized version of the Furnace Helm. Like the Furnace Helm, the Artifurnace is designed to burn magical items and convert their power into propulsion. However, the Artifurnace is designed to draw power from an artifact tier magic item, which are known to be indestructible. As a result, the Artifurnace is an endless source of propulsion.",
+            description: "The Artifurnace is a priceless artifact, an upgraded version of the Furnace Helm. This helm is designed to convert magical power into propulsion for Spelljammer vessels. The Artifurnace functions with the power of an 11th level spellcaster for Spell Surge and Hover Sailing. A Helmsman is still required to control the helm. However, the Artifurnace offers a unique feature: if a sentient magic item is used as the artifact power source, it becomes the Helmsman of the wildjammer itself.",
             properties: [
                 "Counts as an 11th level spellcaster for Spell Surge and Hover Sailing",
                 "A Helmsman is still required to control the helm",
@@ -859,7 +859,7 @@ const wildjammerData = {
             type: "Wondrous item, artifact",
             attunement: "requires attunement by a creature with spellcasting or pact magic",
             value: "50,000gp",
-            description: "This helm is identical to a Wildjammer Helm (major), except it also has additional properties.",
+            description: "This helm is identical to a Wildjammer Helm (major), except it also has additional properties. hen a creature with spellcasting or pact magic attunes to this helm, they must resist its charm with a DC 20 Wisdom saving throw. If charmed, the user enjoys the attunement but suffers daily, irreversible exhaustion. Each day of use requires a special death saving throw, which accumulates until attunement breaks or the user dies. Breaking attunement triggers a point of exhaustion and another special death saving throw.",
             properties: [
                 "Cursed Item: When a creature attunes to this helm, they must make a DC 20 Wisdom saving throw or be charmed by the helm.",
                 "While charmed, the creature enjoys being attuned to the helm, but suffers a point of exhaustion each day that doesn't go away with a long rest.",
@@ -875,7 +875,7 @@ const wildjammerData = {
                 minor: "20,000gp",
                 major: "50,000gp"
             },
-            description: "This helm takes the form of a furnace situated at the center of a ship. Magic items can be burned in the furnace to create propulsion.",
+            description: "The Furnace Helm is a unique propulsion system for Spelljammer vessels, taking the form of a centrally-located furnace. Due to its fire dependency, the Furnace Helm is never used in the Flow. It generates power by burning magic items, with every 1,000 gold pieces' worth of items providing a week of propulsion. For hover sailing, each 1,000 gold pieces burned equates to one spell slot level, up to a maximum of five. The Spell Surge feature allows burning additional items for extra power, but carries a 25% risk of explosion, dealing 10d10 mega fire damage. ",
             properties: [
                 "For every 1,000gp of value burned, the furnace generates one week's worth of propulsion.",
                 "Never used in the Flow due to fire dependence.",
@@ -890,7 +890,7 @@ const wildjammerData = {
             type: "Wondrous item, artifact",
             attunement: "requires attunement by a creature with spellcasting or pact magic",
             value: "75,000gp per link",
-            description: "This rare Helm is a series of specialized Wildjammer Helms. Each link can be attuned to by a different creature, but only one attuned creature can be the Helmsman at a time.",
+            description: "This rare Helm is actually a series of specialized Wildjammer Helms.  Its unique design allows different creatures to attune to each link, though only one can serve as the Helmsman at any given time. This helm functions the same as a minor windjammer helm. However, this helm offers enhanced flexibility in ship control, as the Helmsman role can be transferred between attuned creatures as an action. When employing Spell Surge or hover sailing, each attuned creature can contribute up to 3 spell slot levels, with a maximum total of 9 levels.",
             properties: [
                 "The role of Helmsman can be transferred as an action instead of a bonus action.",
                 "When using Spell Surge or hover sailing, each creature can add up to 3 spell slots worth of levels, up to a maximum of 9 levels.",
@@ -906,7 +906,7 @@ const wildjammerData = {
                 minor: "100,000gp",
                 major: "250,000gp"
             },
-            description: "This ornamental throne covered in Arcane runes comes in two varieties: minor and major.",
+            description: "This ornamental throne covered in Arcane runes comes in two varieties: minor and major. This helm offers a Quick Attunement feature, allowing a spellcaster to instantly attune by expending a 2nd-level spell slot. However, it comes with an Unattunement Backlash: when a Helmsman breaks attunement, they are unable to cast spells using spell slots for 1d4 rounds.",
             properties: [
                 "Minor variant: Can be installed into wildjammers from schooner (mega small) to frigate (mega large) size.",
                 "Major variant: Required for heavy frigates (mega huge) or ships of the line (mega gargantuan).",
