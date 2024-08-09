@@ -118,30 +118,22 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                    <h2 class="text-2xl font-bold mb-2">Crew Complement</h2>
-                    <table class="w-full">
-                        <thead>
-                            <tr>
-                                <th>Type of Crew</th>
-                                <th>#</th>
-                                <th>Rate</th>
-                                <th>Per Month</th>
-                            </tr>
-                        </thead>
-                        <tbody id="crewComplementTable">
-                            <!-- Crew complement rows will be added here dynamically -->
-                        </tbody>
-                    </table>
-                </div>
-                <div>
-                    <h2 class="text-2xl font-bold mb-2">Modules</h2>
-                    <ul id="modulesList">
-                        <!-- Modules will be added here dynamically -->
-                    </ul>
-                    <button id="addModule" class="mt-2 px-4 py-2 rounded hover transition duration-300">Add Module</button>
-                </div>
+            <div>
+                <h2 class="text-2xl font-bold mb-2">Crew Complement</h2>
+                <table class="w-full">
+                    <thead>
+                        <tr>
+                            <th>Type of Crew</th>
+                            <th>#</th>
+                            <th>Rate (Day/Month)</th>
+                            <th>Total (Day)</th>
+                            <th>Total (Month)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="crewComplementTable">
+                        <!-- Crew complement rows will be added here dynamically -->
+                    </tbody>
+                </table>
             </div>
 
             <div class="mb-4">
@@ -284,6 +276,7 @@
                 document.getElementById('bulwarkPoints').textContent = currentShip.bp;
                 document.getElementById('hullPoints').value = currentShip.hp;
                 document.getElementById('armorClass').textContent = currentShip.ac;
+                updateCrewComplementTable(); 
         
                 // Update helm information
                 const helmInfo = wildjammerData.helms[currentShip.helmType];
@@ -305,6 +298,69 @@
                 document.getElementById('goldInput').value = currentShip.cargo.gold;
                 document.getElementById('platinumInput').value = currentShip.cargo.platinum;
                 document.getElementById('cargoItems').value = currentShip.cargo.items;
+            }
+            function updateCrewComplementTable() {
+                const crewTypes = [
+                    { type: "Green Crew", dayRate: 1.5, monthRate: 45 },
+                    { type: "Veteran Crew", dayRate: 3, monthRate: 90 },
+                    { type: "Mercenaries", dayRate: 5, monthRate: 150 },
+                    { type: "Giff Mercenaries", dayRate: 6.5, monthRate: 195 },
+                    { type: "Hurwaeti Mercenaries", dayRate: 8, monthRate: 240 }
+                ];
+            
+                const table = document.getElementById('crewComplementTable');
+                table.innerHTML = '';
+            
+                crewTypes.forEach((crew, index) => {
+                    const row = table.insertRow();
+                    row.innerHTML = `
+                        <td>${crew.type}</td>
+                        <td><input type="number" class="crew-count w-16 text-center" data-index="${index}" value="${currentShip.crewComplement?.[index]?.count || 0}" min="0"></td>
+                        <td>${crew.dayRate}gp / ${crew.monthRate}gp</td>
+                        <td class="total-day"></td>
+                        <td class="total-month"></td>
+                    `;
+                });
+            
+                document.querySelectorAll('.crew-count').forEach(input => {
+                    input.addEventListener('change', updateCrewTotals);
+                });
+            
+                updateCrewTotals();
+            }
+            
+            function updateCrewTotals() {
+                const crewTypes = [
+                    { dayRate: 1.5, monthRate: 45 },
+                    { dayRate: 3, monthRate: 90 },
+                    { dayRate: 5, monthRate: 150 },
+                    { dayRate: 6.5, monthRate: 195 },
+                    { dayRate: 8, monthRate: 240 }
+                ];
+            
+                const rows = document.getElementById('crewComplementTable').rows;
+                let totalDay = 0;
+                let totalMonth = 0;
+            
+                for (let i = 0; i < rows.length; i++) {
+                    const count = parseInt(rows[i].querySelector('.crew-count').value) || 0;
+                    const dayTotal = count * crewTypes[i].dayRate;
+                    const monthTotal = count * crewTypes[i].monthRate;
+            
+                    rows[i].querySelector('.total-day').textContent = dayTotal.toFixed(2) + 'gp';
+                    rows[i].querySelector('.total-month').textContent = monthTotal.toFixed(2) + 'gp';
+            
+                    totalDay += dayTotal;
+                    totalMonth += monthTotal;
+            
+                    // Update the currentShip object
+                    if (!currentShip.crewComplement) currentShip.crewComplement = [];
+                    currentShip.crewComplement[i] = { count: count };
+                }
+            
+                // You can add total rows here if needed
+            
+                saveShipChanges();
             }
             function updateWeaponsList() {
                 console.log('Updating weapons list:', currentShip.weapons);
@@ -593,6 +649,8 @@
                         currentShip.moduleUses[moduleKey] = usedCount;
                     }
                 });
+                // Add this line to save crew complement data
+                currentShip.crewComplement = currentShip.crewComplement || [];
             
                 // Save updated ship to localStorage
                 const ships = JSON.parse(localStorage.getItem('wildjammerShips')) || {};
