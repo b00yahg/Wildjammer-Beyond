@@ -242,7 +242,7 @@
             populateDropdown('weaponSelect', wildjammerData.weapons);
             populateDropdown('upgradeSelect', wildjammerData.upgrades);
         });   
-            function loadShip(shipId) {
+              function loadShip(shipId) {
                 const ships = JSON.parse(localStorage.getItem('wildjammerShips')) || {};
                 const shipData = ships[shipId];
                 if (shipData) {
@@ -306,6 +306,15 @@
                 document.getElementById('goldInput').value = currentShip.cargo.gold;
                 document.getElementById('platinumInput').value = currentShip.cargo.platinum;
                 document.getElementById('cargoItems').value = currentShip.cargo.items;
+
+                // Update weapons list
+                updateWeaponsList();
+                
+                // Update modules list
+                updateModulesList();
+                
+                // Update upgrades list
+                updateUpgradesList();
             }
             function updateCrewComplementTable() {
                 const crewTypes = [
