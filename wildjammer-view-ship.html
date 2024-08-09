@@ -115,6 +115,7 @@
                 <div id="helmInfo" class="ship-card p-4 rounded">
                     <h3 id="helmName" class="font-bold">-</h3>
                     <p id="helmDescription">-</p>
+                    <ul id="helmProperties" class="list-disc list-inside mt-2"></ul>
                 </div>
             </div>
 
@@ -288,8 +289,27 @@
         
                 // Update helm information
                 const helmInfo = wildjammerData.helms[currentShip.helmType];
-                document.getElementById('helmName').textContent = helmInfo.name;
-                document.getElementById('helmDescription').textContent = helmInfo.description;
+                if (helmInfo) {
+                    document.getElementById('helmName').textContent = helmInfo.name;
+                    document.getElementById('helmDescription').textContent = helmInfo.description;
+                    
+                    const helmPropertiesList = document.getElementById('helmProperties');
+                    helmPropertiesList.innerHTML = ''; // Clear existing properties
+                    
+                    if (helmInfo.properties && helmInfo.properties.length > 0) {
+                        helmInfo.properties.forEach(property => {
+                            const li = document.createElement('li');
+                            li.textContent = property;
+                            helmPropertiesList.appendChild(li);
+                        });
+                    } else {
+                        helmPropertiesList.style.display = 'none'; // Hide the list if no properties
+                    }
+                } else {
+                    document.getElementById('helmName').textContent = 'Unknown Helm';
+                    document.getElementById('helmDescription').textContent = 'No information available';
+                    document.getElementById('helmProperties').style.display = 'none';
+                }
         
                 // Update weapons list
                 updateWeaponsList();
