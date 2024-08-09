@@ -623,7 +623,7 @@
                 currentShip.fighterHelmsman2 = document.getElementById('fighterHelmsman2').textContent;
                 currentShip.fighterHelmsman3 = document.getElementById('fighterHelmsman3').textContent;
                 currentShip.maneuverability = parseInt(document.getElementById('maneuverability').textContent);
-                currentShip.speed = parseInt(document.getElementById('tacticalSpeed').textContent.split(' ')[0]); // Extract the speed value
+                currentShip.speed = parseInt(document.getElementById('tacticalSpeed').textContent.split(' ')[0]);
                 currentShip.bp = parseInt(document.getElementById('bulwarkPoints').textContent);
                 currentShip.hp = parseInt(document.getElementById('hullPoints').value);
                 currentShip.ac = parseInt(document.getElementById('armorClass').textContent);
@@ -637,34 +637,35 @@
                 };
             
                 // Save weapon modifiers and HP
+                currentShip.weaponModifiers = {};
                 currentShip.weapons.forEach((weaponKey, index) => {
-                    const toHitModifier = parseInt(document.querySelector(`.weapon-to-hit[data-index="${index}"]`).value) || 0;
-                    const damageModifier = parseInt(document.querySelector(`.weapon-damage-modifier[data-index="${index}"]`).value) || 0;
-                    const hpInput = document.querySelector(`.weapon-hp[data-index="${index}"]`);
-                    const hp = parseInt(hpInput.value) || 10;
-                    if (!currentShip.weaponModifiers) currentShip.weaponModifiers = {};
-                    if (!currentShip.weaponModifiers[weaponKey]) currentShip.weaponModifiers[weaponKey] = {};
+                    const toHitModifier = parseInt(document.querySelector(`.weapon-to-hit[data-index="${index}"]`)?.value) || 0;
+                    const damageModifier = parseInt(document.querySelector(`.weapon-damage-modifier[data-index="${index}"]`)?.value) || 0;
+                    const hp = parseInt(document.querySelector(`.weapon-hp[data-index="${index}"]`)?.value) || 10;
                     currentShip.weaponModifiers[weaponKey] = { toHit: toHitModifier, damage: damageModifier, hp: hp };
                 });
             
                 // Save module uses
-                if (!currentShip.moduleUses) currentShip.moduleUses = {};
+                currentShip.moduleUses = {};
                 currentShip.modules.forEach((moduleKey, index) => {
                     const module = wildjammerData.modules[moduleKey];
                     if (module && module.uses) {
                         const useCountInput = document.querySelector(`.module-use-count[data-index="${index}"]`);
-                        const usedCount = parseInt(useCountInput.value) || 0;
+                        const usedCount = parseInt(useCountInput?.value) || 0;
                         currentShip.moduleUses[moduleKey] = usedCount;
                     }
                 });
-                // Add this line to save crew complement data
-                currentShip.crewComplement = currentShip.crewComplement || [];
+            
+                // Save crew complement data
+                currentShip.crewComplement = Array.from(document.querySelectorAll('.crew-count')).map(input => ({
+                    count: parseInt(input.value) || 0
+                }));
             
                 // Save updated ship to localStorage
                 const ships = JSON.parse(localStorage.getItem('wildjammerShips')) || {};
                 ships[currentShip.id] = currentShip.toJSON();
                 localStorage.setItem('wildjammerShips', JSON.stringify(ships));
-                console.log('Ship changes saved');
+                console.log('Ship changes saved:', currentShip);
             }
             
             function populateDropdown(selectId, data) {
