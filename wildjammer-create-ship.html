@@ -89,7 +89,12 @@
     <script src="ship-class.js"></script>
     <script src="theme-switcher.js"></script>
     <script>
+        let editingShipId = null;
+
         document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const shipId = urlParams.get('id');
+
             // Populate hull type options
             const hullTypeSelect = document.getElementById('hullType');
             for (const [key, value] of Object.entries(wildjammerData.hulls)) {
@@ -108,50 +113,74 @@
                 helmTypeSelect.appendChild(option);
             }
 
+            if (shipId) {
+                // We're in edit mode
+                editingShipId = shipId;
+                const ships = JSON.parse(localStorage.getItem('wildjammerShips')) || {};
+                const shipToEdit = ships[shipId];
+
+                if (shipToEdit) {
+                    // Populate the form with existing ship data
+                    document.getElementById('shipName').value = shipToEdit.name;
+                    document.getElementById('hullType').value = shipToEdit.hullType;
+                    document.getElementById('helmType').value = shipToEdit.helmType;
+                    document.getElementById('captain').value = shipToEdit.captain;
+                    document.getElementById('helmsman').value = shipToEdit.helmsman;
+                    document.getElementById('boatswain').value = shipToEdit.boatswain;
+                    document.getElementById('gunner1').value = shipToEdit.gunner1;
+                    document.getElementById('gunner2').value = shipToEdit.gunner2;
+                    document.getElementById('gunner3').value = shipToEdit.gunner3;
+                    document.getElementById('fighterHelmsman1').value = shipToEdit.fighterHelmsman1;
+                    document.getElementById('fighterHelmsman2').value = shipToEdit.fighterHelmsman2;
+                    document.getElementById('fighterHelmsman3').value = shipToEdit.fighterHelmsman3;
+
+                    // Change the button text to "Update Ship"
+                    document.getElementById('createShipButton').textContent = 'Update Ship';
+                }
+            }
+
             document.getElementById('createShipButton').addEventListener('click', createShip);
         });
 
         function createShip() {
             console.log("Create Ship function called");
-            const shipName = document.getElementById('shipName').value;
-            const hullType = document.getElementById('hullType').value;
-            const helmType = document.getElementById('helmType').value;
-            const captain = document.getElementById('captain').value;
-            const helmsman = document.getElementById('helmsman').value;
-            const boatswain = document.getElementById('boatswain').value;
-            const gunner1 = document.getElementById('gunner1').value;
-            const gunner2 = document.getElementById('gunner2').value;
-            const gunner3 = document.getElementById('gunner3').value;
-            const fighterHelmsman1 = document.getElementById('fighterHelmsman1').value;
-            const fighterHelmsman2 = document.getElementById('fighterHelmsman2').value;
-            const fighterHelmsman3 = document.getElementById('fighterHelmsman3').value;
-
-            const newShip = new Ship({
-                name: shipName,
-                hullType: hullType,
-                helmType: helmType,
-                captain: captain,
-                helmsman: helmsman,
-                boatswain: boatswain,
-                gunner1: gunner1,
-                gunner2: gunner2,
-                gunner3: gunner3,
-                fighterHelmsman1: fighterHelmsman1,
-                fighterHelmsman2: fighterHelmsman2,
-                fighterHelmsman3: fighterHelmsman3
-            });
-
+            const shipData = {
+                name: document.getElementById('shipName').value,
+                hullType: document.getElementById('hullType').value,
+                helmType: document.getElementById('helmType').value,
+                captain: document.getElementById('captain').value,
+                helmsman: document.getElementById('helmsman').value,
+                boatswain: document.getElementById('boatswain').value,
+                gunner1: document.getElementById('gunner1').value,
+                gunner2: document.getElementById('gunner2').value,
+                gunner3: document.getElementById('gunner3').value,
+                fighterHelmsman1: document.getElementById('fighterHelmsman1').value,
+                fighterHelmsman2: document.getElementById('fighterHelmsman2').value,
+                fighterHelmsman3: document.getElementById('fighterHelmsman3').value
+            };
+        
+            let newShip;
+            if (editingShipId) {
+                // We're updating an existing ship
+                const ships = JSON.parse(localStorage.getItem('wildjammerShips')) || {};
+                newShip = new Ship(Object.assign({}, ships[editingShipId], shipData));
+                newShip.id = editingShipId; // Ensure we keep the same ID
+            } else {
+                // We're creating a new ship
+                newShip = new Ship(shipData);
+            }
+        
             console.log("New ship created:", newShip);
-
+        
             // Update hull information from wildjammerData
-            const hullInfo = wildjammerData.hulls[hullType];
+            const hullInfo = wildjammerData.hulls[newShip.hullType];
             newShip.updateHullInfo(hullInfo);
-
-            // Save the new ship to localStorage
+        
+            // Save the new or updated ship to localStorage
             const ships = JSON.parse(localStorage.getItem('wildjammerShips')) || {};
             ships[newShip.id] = newShip.toJSON();
             localStorage.setItem('wildjammerShips', JSON.stringify(ships));
-
+        
             console.log("Redirecting to:", `wildjammer-view-ship.html?id=${newShip.id}`);
             window.location.href = `wildjammer-view-ship.html?id=${newShip.id}`;
         }

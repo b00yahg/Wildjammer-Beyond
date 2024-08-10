@@ -212,15 +212,15 @@ function loadShipList() {
     setTimeout(() => {  // Simulating network delay
       try {
         const storedShips = JSON.parse(localStorage.getItem('wildjammerShips')) || {};
-        ships = Object.values(storedShips).map(shipData => {
+        const shipsWithIds = Object.entries(storedShips).map(([id, shipData]) => {
           try {
-            return new Ship(shipData);
+            return { id, ship: new Ship(shipData) };
           } catch (error) {
             console.error('Error creating Ship object:', error);
             return null;
           }
-        }).filter(ship => ship !== null);
-        displayShips(ships);
+        }).filter(item => item !== null);
+        displayShips(shipsWithIds);
       } catch (error) {
         console.error('Error loading ships:', error);
         displayError('An error occurred while loading the ships. Please try again.');
@@ -236,33 +236,40 @@ function loadShipList() {
 
 function displayShips(shipsToDisplay) {
   const shipList = document.getElementById('shipList');
-  if (!shipList) return;
-
+  if (!shipList) {
+    console.error('Ship list element not found');
+    return;
+  }
   shipList.innerHTML = '';
-  if (shipsToDisplay.length === 0) {
+  if (!Array.isArray(shipsToDisplay) || shipsToDisplay.length === 0) {
     shipList.innerHTML = '<p>No ships found. Create a new Wildjammer to get started!</p>';
     return;
   }
-
-  shipsToDisplay.forEach(ship => {
+  const fragment = document.createDocumentFragment();
+  shipsToDisplay.forEach(({id, ship}) => {
+    if (!ship || typeof ship !== 'object') {
+      console.warn('Invalid ship object encountered');
+      return;
+    }
     const shipCard = document.createElement('div');
     shipCard.className = 'ship-card';
     shipCard.innerHTML = `
       <div class="ship-card-header">
-        <h2 class="ship-name astral-text">${ship.name}</h2>
-        <p class="ship-type">${ship.hullType} | ${getShipType(ship.hullType)}</p>
+        <h2 class="ship-name astral-text">${ship.name || 'Unnamed Ship'}</h2>
+        <p class="ship-type">${ship.hullType || 'Unknown'} | ${getShipType(ship.hullType) || 'Unknown Type'}</p>
       </div>
       <div class="ship-card-content">
-        <p class="ship-captain">Captain: ${ship.captain}</p>
+        <p class="ship-captain">Captain: ${ship.captain || 'No Captain Assigned'}</p>
         <div class="ship-actions">
-          <a href="wildjammer-view-ship.html?id=${ship.id}" class="magical-glow">VIEW</a>
-          <a href="wildjammer-create-ship.html?id=${ship.id}" class="magical-glow">EDIT</a>
-          <button onclick="deleteShip('${ship.id}')" class="magical-glow">DELETE</button>
+          <a href="wildjammer-view-ship.html?id=${id}" class="magical-glow">VIEW</a>
+          <a href="wildjammer-create-ship.html?id=${id}" class="magical-glow">EDIT</a>
+          <button onclick="deleteShip('${id}')" class="magical-glow">DELETE</button>
         </div>
       </div>
     `;
-    shipList.appendChild(shipCard);
+    fragment.appendChild(shipCard);
   });
+  shipList.appendChild(fragment);
   updateDynamicClasses();
 }
 

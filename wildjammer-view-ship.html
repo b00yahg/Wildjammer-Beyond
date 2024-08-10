@@ -9,6 +9,7 @@
     <script src="ship-class.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Space+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="spelljammer-style.css">
+    <link rel="icon" href="data:,">
     <script src="theme-switcher.js" defer></script>
     <style>
         .editable:hover {
@@ -36,6 +37,8 @@
             z-index: 999;
         }
     </style>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 </head>
 <body class="light-mode">
     <div class="cosmic-dust"></div>
@@ -120,20 +123,7 @@
 
             <div>
                 <h2 class="text-2xl font-bold mb-2">Crew Complement</h2>
-                <table class="w-full">
-                    <thead>
-                        <tr>
-                            <th>Type of Crew</th>
-                            <th>#</th>
-                            <th>Rate (Day/Month)</th>
-                            <th>Total (Day)</th>
-                            <th>Total (Month)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="crewComplementTable">
-                        <!-- Crew complement rows will be added here dynamically -->
-                    </tbody>
-                </table>
+                <div id="crewComplementTable"></div>
             </div>
 
             <div>
@@ -208,6 +198,113 @@
 
     <div id="overlay" class="overlay"></div>
         <script>
+        const CrewComplementTable = ({ crewComplement, onCrewChange, onAddCustomCrew }) => {
+            const [showCustomCrewForm, setShowCustomCrewForm] = React.useState(false);
+            const [customCrewName, setCustomCrewName] = React.useState('');
+            const [customCrewDayRate, setCustomCrewDayRate] = React.useState('');
+            const [customCrewMonthRate, setCustomCrewMonthRate] = React.useState('');
+        
+            const handleAddCustomCrew = () => {
+                if (customCrewName && customCrewDayRate && customCrewMonthRate) {
+                    onAddCustomCrew({
+                        type: `Custom: ${customCrewName}`,
+                        dayRate: parseFloat(customCrewDayRate),
+                        monthRate: parseFloat(customCrewMonthRate),
+                        count: 0
+                    });
+                    setShowCustomCrewForm(false);
+                    setCustomCrewName('');
+                    setCustomCrewDayRate('');
+                    setCustomCrewMonthRate('');
+                }
+            };
+        
+            return React.createElement('div', null, [
+                React.createElement('table', { className: "w-full", key: "table" }, [
+                    React.createElement('thead', { key: "thead" }, 
+                        React.createElement('tr', null, [
+                            React.createElement('th', { key: "th1" }, "Type of Crew"),
+                            React.createElement('th', { key: "th2" }, "#"),
+                            React.createElement('th', { key: "th3" }, "Rate (Day/Month)"),
+                            React.createElement('th', { key: "th4" }, "Total (Day)"),
+                            React.createElement('th', { key: "th5" }, "Total (Month)")
+                        ])
+                    ),
+                    React.createElement('tbody', { key: "tbody" }, 
+                        crewComplement.map((crew, index) => 
+                            React.createElement('tr', { key: index }, [
+                                React.createElement('td', { key: "td1" }, crew.type),
+                                React.createElement('td', { key: "td2" }, 
+                                    React.createElement('input', {
+                                        type: "number",
+                                        value: crew.count,
+                                        onChange: (e) => onCrewChange(index, parseInt(e.target.value) || 0),
+                                        min: "0",
+                                        className: "w-16 text-center"
+                                    })
+                                ),
+                                React.createElement('td', { key: "td3" }, `${crew.dayRate}gp / ${crew.monthRate}gp`),
+                                React.createElement('td', { key: "td4" }, `${(crew.count * crew.dayRate).toFixed(2)}gp`),
+                                React.createElement('td', { key: "td5" }, `${(crew.count * crew.monthRate).toFixed(2)}gp`)
+                            ])
+                        )
+                    )
+                ]),
+                !showCustomCrewForm && React.createElement('button', {
+                    onClick: () => setShowCustomCrewForm(true),
+                    className: "mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300",
+                    key: "addButton"
+                }, "Add Custom Crew Type"),
+                showCustomCrewForm && React.createElement('div', { className: "mt-4 p-4 border rounded", key: "form" }, [
+                    React.createElement('h3', { className: "mb-2", key: "formTitle" }, "Add Custom Crew Type"),
+                    React.createElement('div', { className: "mb-2", key: "nameInput" }, [
+                        React.createElement('label', { htmlFor: "customCrewName", key: "nameLabel" }, "Crew Name"),
+                        React.createElement('input', {
+                            id: "customCrewName",
+                            value: customCrewName,
+                            onChange: (e) => setCustomCrewName(e.target.value),
+                            placeholder: "e.g., Elite Guards",
+                            className: "w-full p-2 border rounded",
+                            key: "nameField"
+                        })
+                    ]),
+                    React.createElement('div', { className: "mb-2", key: "dayRateInput" }, [
+                        React.createElement('label', { htmlFor: "customCrewDayRate", key: "dayRateLabel" }, "Day Rate (gp)"),
+                        React.createElement('input', {
+                            id: "customCrewDayRate",
+                            type: "number",
+                            value: customCrewDayRate,
+                            onChange: (e) => setCustomCrewDayRate(e.target.value),
+                            placeholder: "e.g., 10",
+                            className: "w-full p-2 border rounded",
+                            key: "dayRateField"
+                        })
+                    ]),
+                    React.createElement('div', { className: "mb-2", key: "monthRateInput" }, [
+                        React.createElement('label', { htmlFor: "customCrewMonthRate", key: "monthRateLabel" }, "Month Rate (gp)"),
+                        React.createElement('input', {
+                            id: "customCrewMonthRate",
+                            type: "number",
+                            value: customCrewMonthRate,
+                            onChange: (e) => setCustomCrewMonthRate(e.target.value),
+                            placeholder: "e.g., 300",
+                            className: "w-full p-2 border rounded",
+                            key: "monthRateField"
+                        })
+                    ]),
+                    React.createElement('button', {
+                        onClick: handleAddCustomCrew,
+                        className: "px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition duration-300 mr-2",
+                        key: "submitButton"
+                    }, "Add Custom Crew"),
+                    React.createElement('button', {
+                        onClick: () => setShowCustomCrewForm(false),
+                        className: "px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition duration-300",
+                        key: "cancelButton"
+                    }, "Cancel")
+                ])
+            ]);
+        };
         let currentShip;
         let editMode = false;
     
@@ -242,12 +339,39 @@
             populateDropdown('weaponSelect', wildjammerData.weapons);
             populateDropdown('upgradeSelect', wildjammerData.upgrades);
         });   
-              function loadShip(shipId) {
+            
+            function loadShip(shipId) {
                 const ships = JSON.parse(localStorage.getItem('wildjammerShips')) || {};
                 const shipData = ships[shipId];
                 if (shipData) {
                     currentShip = new Ship(shipData);
                     console.log('Loaded ship:', currentShip);
+                    
+                    // Ensure crewComplement is initialized with default crew types
+                    const defaultCrewTypes = [
+                        { type: "Green Crew", count: 0, dayRate: 1.5, monthRate: 45 },
+                        { type: "Veteran Crew", count: 0, dayRate: 3, monthRate: 90 },
+                        { type: "Mercenaries", count: 0, dayRate: 5, monthRate: 150 },
+                        { type: "Giff Mercenaries", count: 0, dayRate: 6.5, monthRate: 195 },
+                        { type: "Hurwaeti Mercenaries", count: 0, dayRate: 8, monthRate: 240 }
+                    ];
+            
+                    if (!Array.isArray(currentShip.crewComplement)) {
+                        currentShip.crewComplement = [];
+                    }
+            
+                    // Ensure all default crew types are present
+                    defaultCrewTypes.forEach(defaultCrew => {
+                        const existingCrew = currentShip.crewComplement.find(crew => crew.type === defaultCrew.type);
+                        if (!existingCrew) {
+                            currentShip.crewComplement.push({ ...defaultCrew });
+                        }
+                    });
+            
+                    // Keep any custom crew types that were added
+                    currentShip.crewComplement = currentShip.crewComplement.filter(crew => 
+                        defaultCrewTypes.some(defaultCrew => defaultCrew.type === crew.type) || crew.type.startsWith("Custom")
+                    );
                     
                     // Ensure weaponModifiers is initialized
                     currentShip.weaponModifiers = currentShip.weaponModifiers || {};
@@ -256,12 +380,13 @@
                     currentShip.upgrades.forEach(upgradeKey => {
                         applyUpgradeEffect(upgradeKey, true);
                     });
+                    
+                    updateShipDisplay();
                 } else {
                     console.error('Ship not found in localStorage');
                     window.location.href = 'create-ship.html';
                     return;
                 }
-                updateShipDisplay();
             }
         
             function updateShipDisplay() {
@@ -284,7 +409,7 @@
                 document.getElementById('bulwarkPoints').textContent = currentShip.bp;
                 document.getElementById('hullPoints').value = currentShip.hp;
                 document.getElementById('armorClass').textContent = currentShip.ac;
-                updateCrewComplementTable(); 
+                renderCrewComplementTable();
         
                 // Update helm information
                 const helmInfo = wildjammerData.helms[currentShip.helmType];
@@ -316,34 +441,28 @@
                 // Update upgrades list
                 updateUpgradesList();
             }
-            function updateCrewComplementTable() {
-                const crewTypes = [
-                    { type: "Green Crew", dayRate: 1.5, monthRate: 45 },
-                    { type: "Veteran Crew", dayRate: 3, monthRate: 90 },
-                    { type: "Mercenaries", dayRate: 5, monthRate: 150 },
-                    { type: "Giff Mercenaries", dayRate: 6.5, monthRate: 195 },
-                    { type: "Hurwaeti Mercenaries", dayRate: 8, monthRate: 240 }
-                ];
             
-                const table = document.getElementById('crewComplementTable');
-                table.innerHTML = '';
-            
-                crewTypes.forEach((crew, index) => {
-                    const row = table.insertRow();
-                    row.innerHTML = `
-                        <td>${crew.type}</td>
-                        <td><input type="number" class="crew-count w-16 text-center" data-index="${index}" value="${currentShip.crewComplement?.[index]?.count || 0}" min="0"></td>
-                        <td>${crew.dayRate}gp / ${crew.monthRate}gp</td>
-                        <td class="total-day"></td>
-                        <td class="total-month"></td>
-                    `;
-                });
-            
-                document.querySelectorAll('.crew-count').forEach(input => {
-                    input.addEventListener('change', updateCrewTotals);
-                });
-            
-                updateCrewTotals();
+            function renderCrewComplementTable() {
+                const crewComplementTable = document.getElementById('crewComplementTable');
+                if (!crewComplementTable) {
+                    console.error('Crew complement table element not found');
+                    return;
+                }
+                
+                const root = ReactDOM.createRoot(crewComplementTable);
+                root.render(React.createElement(CrewComplementTable, {
+                    crewComplement: currentShip.crewComplement,
+                    onCrewChange: (index, newCount) => {
+                        currentShip.crewComplement[index].count = newCount;
+                        saveShipChanges();
+                        renderCrewComplementTable(); // Re-render to update totals
+                    },
+                    onAddCustomCrew: (newCrew) => {
+                        currentShip.crewComplement.push(newCrew);
+                        saveShipChanges();
+                        renderCrewComplementTable();
+                    }
+                }));
             }
             
             function updateCrewTotals() {
@@ -666,10 +785,12 @@
                 });
             
                 // Save crew complement data
-                currentShip.crewComplement = Array.from(document.querySelectorAll('.crew-count')).map(input => ({
-                    count: parseInt(input.value) || 0
+                currentShip.crewComplement = currentShip.crewComplement.map(crew => ({
+                    type: crew.type,
+                    count: crew.count,
+                    dayRate: crew.dayRate,
+                    monthRate: crew.monthRate
                 }));
-            
                 // Save updated ship to localStorage
                 const ships = JSON.parse(localStorage.getItem('wildjammerShips')) || {};
                 ships[currentShip.id] = currentShip.toJSON();
