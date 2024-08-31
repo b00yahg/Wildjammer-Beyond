@@ -28,6 +28,9 @@
             <h1 id="my-wildjammers" class="astral-text">My Wildjammers</h1>
             <div class="button-container">
                 <a href="wildjammer-create-ship.html" class="magical-glow">CREATE A WILDJAMMER</a>
+                <button onclick="exportShipData()" class="magical-glow">Export Ships</button>
+                <input type="file" id="importFile" style="display: none;" onchange="importShipData(event)">
+                <button onclick="document.getElementById('importFile').click()" class="magical-glow">Import Ships</button>
                 <button id="toggleDarkMode" class="magical-glow">Toggle Dark Mode</button>
             </div>
         </div>
