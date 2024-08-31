@@ -407,3 +407,48 @@ if (typeof module !== 'undefined' && module.exports) {
     initializePage
   };
 }
+
+// Function to export ship data
+function exportShipData() {
+  const storedShips = JSON.parse(localStorage.getItem('wildjammerShips')) || {};
+  const dataStr = JSON.stringify(storedShips);
+  const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+  
+  const exportFileDefaultName = 'wildjammer_ships.json';
+
+  const linkElement = document.createElement('a');
+  linkElement.setAttribute('href', dataUri);
+  linkElement.setAttribute('download', exportFileDefaultName);
+  linkElement.click();
+}
+
+// Function to import ship data
+function importShipData(event) {
+  const file = event.target.files[0];
+  const reader = new FileReader();
+
+  reader.onload = function(e) {
+    try {
+      const importedData = JSON.parse(e.target.result);
+      const currentShips = JSON.parse(localStorage.getItem('wildjammerShips')) || {};
+      
+      // Merge imported ships with current ships, overwriting duplicates
+      const mergedShips = { ...currentShips, ...importedData };
+      
+      localStorage.setItem('wildjammerShips', JSON.stringify(mergedShips));
+      alert('Ships imported successfully!');
+      
+      // Refresh the ship list if on the main page
+      if (typeof loadShipList === 'function') {
+        loadShipList();
+      }
+    } catch (error) {
+      console.error('Error importing ships:', error);
+      alert('Error importing ships. Please check the file format.');
+    }
+  };
+
+  reader.readAsText(file);
+}
+
+
