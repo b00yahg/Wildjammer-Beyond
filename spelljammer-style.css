@@ -1,5 +1,23 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative&family=Space+Grotesk&family=Spectral&display=swap');
 
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #shipSheet, #shipSheet * {
+        visibility: visible;
+    }
+    #shipSheet {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+    .magical-glow {
+        text-shadow: none;
+        box-shadow: none;
+    }
+}
 :root {
   /* Light mode colors inspired by Image 2 */
   --light-bg: #d2fdf3;
