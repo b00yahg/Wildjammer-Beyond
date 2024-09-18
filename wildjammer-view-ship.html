@@ -48,6 +48,7 @@
             <div>
                 <button id="editModeToggle" class="px-4 py-2 rounded hover transition duration-300 mr-2">Toggle Edit Mode</button>
                 <button id="toggleDarkMode" class="px-4 py-2 rounded hover transition duration-300">Toggle Dark Mode</button>
+                <button id="exportPDF" class="magical-glow">Export as PDF</button>
             </div>
         </div>
 
@@ -338,7 +339,35 @@
             populateDropdown('moduleSelect', wildjammerData.modules);
             populateDropdown('weaponSelect', wildjammerData.weapons);
             populateDropdown('upgradeSelect', wildjammerData.upgrades);
-        });   
+        });  
+        document.getElementById('exportPDF').addEventListener('click', function() {
+        // Clone the ship sheet to modify it for PDF export
+        const shipSheet = document.getElementById('shipSheet').cloneNode(true);
+        
+        // Remove any interactive elements or styles not needed in the PDF
+        shipSheet.querySelectorAll('button, .editable').forEach(el => {
+            el.classList.remove('editable');
+            el.removeAttribute('contenteditable');
+        });
+    
+        // Apply print-specific styles
+        shipSheet.style.backgroundColor = 'white';
+        shipSheet.style.color = 'black';
+        shipSheet.style.padding = '20px';
+        shipSheet.style.fontFamily = 'Arial, sans-serif';
+    
+        // Configure PDF options
+        const opt = {
+            margin: 10,
+            filename: 'wildjammer_ship_sheet.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+    
+        // Generate and download the PDF
+        html2pdf().from(shipSheet).set(opt).save();
+    });
             
             function loadShip(shipId) {
                 const ships = JSON.parse(localStorage.getItem('wildjammerShips')) || {};
@@ -901,5 +930,6 @@
             <button id="cancelAddUpgrade" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition duration-300">Cancel</button>
         </div>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </body>
 </html>
