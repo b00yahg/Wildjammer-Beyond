@@ -39,6 +39,18 @@
     </style>
 <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
+<script>
+  WebFont.load({
+    google: {
+      families: ['Your Custom Font']
+    },
+    active: function() {
+      // Fonts are loaded, now it's safe to generate PDF
+      document.getElementById('exportPDF').disabled = false;
+    }
+  });
+</script>
 </head>
 <body class="light-mode">
     <div class="cosmic-dust"></div>
